@@ -50,6 +50,7 @@ class VersionWidget extends StatefulWidget {
 class _VersionWidgetState extends State<VersionWidget> {
   bool _isLatest = true;
   String _currentDate = '';
+  bool _showTooltip = false;
 
   @override
   void initState() {
@@ -92,38 +93,67 @@ class _VersionWidgetState extends State<VersionWidget> {
         ? 'Version ${widget.version} - $_currentDate'
         : 'Version ${widget.version}';
 
-    return Tooltip(
-      message: '''
-      **Version:** ${_isLatest ? '''This app is regularly updated to bring you the best
-      experience. The latest version is always available from the website. 
-      **Tap** on the **Version** text here to visit the *CHANGELOG* in your 
-      browser and see a list of all changes.
-      ''' : '''*A newer version is available!* Visit the website for update instructions.'''}
-      ''',
-      child: GestureDetector(
-        onTap: widget.changelogUrl == null
-            ? null
-            : () async {
-                final Uri url = Uri.parse(widget.changelogUrl!);
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url);
-                } else {
-                  debugPrint('Could not launch ${widget.changelogUrl}');
-                }
-              },
-        child: MouseRegion(
-          cursor: widget.changelogUrl == null
-              ? SystemMouseCursors.basic
-              : SystemMouseCursors.click,
-          child: Text(
-            displayText,
-            style: TextStyle(
-              color: _isLatest ? Colors.blue : Colors.red,
-              fontSize: 16,
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: widget.changelogUrl == null
+              ? null
+              : () async {
+                  final Uri url = Uri.parse(widget.changelogUrl!);
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  } else {
+                    debugPrint('Could not launch ${widget.changelogUrl}');
+                  }
+                },
+          onTapDown: (_) => setState(() => _showTooltip = true),
+          onTapUp: (_) => setState(() => _showTooltip = false),
+          onTapCancel: () => setState(() => _showTooltip = false),
+          child: MouseRegion(
+            cursor: widget.changelogUrl == null
+                ? SystemMouseCursors.basic
+                : SystemMouseCursors.click,
+            child: Text(
+              displayText,
+              style: TextStyle(
+                color: _isLatest ? Colors.blue : Colors.red,
+                fontSize: 16,
+              ),
             ),
           ),
         ),
-      ),
+        if (_showTooltip)
+          Positioned(
+            top: -60,
+            left: 0,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.black87,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: RichText(
+                text: TextSpan(
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                  children: [
+                    const TextSpan(
+                      text: 'Version: ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text: _isLatest
+                          ? 'This app is regularly updated to bring you the best experience. The latest version is always available from the website. Tap on the Version text here to visit the CHANGELOG in your browser and see a list of all changes.'
+                          : 'A newer version is available! Visit the website for update instructions.',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
