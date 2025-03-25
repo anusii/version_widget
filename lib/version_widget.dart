@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 /// Example usage:
 /// ```dart
 /// VersionWidget(
-///   version: '1.0.0',
 ///   changelogUrl: 'https://github.com/yourusername/yourrepo/raw/main/CHANGELOG.md',
 ///   showDate: true,
 ///   defaultDate: '20240101',
@@ -19,10 +18,11 @@ import 'package:http/http.dart' as http;
 /// ```
 class VersionWidget extends StatefulWidget {
   /// The version string to display (e.g., '1.0.0').
-  final String version;
+  /// If not provided, will be extracted from the changelog.
+  final String? version;
 
   /// The URL to the CHANGELOG.md file.
-  /// If provided, the widget will attempt to extract the release date from it.
+  /// If provided, the widget will attempt to extract the release date and version from it.
   final String? changelogUrl;
 
   /// Whether to show the release date alongside the version.
@@ -37,7 +37,7 @@ class VersionWidget extends StatefulWidget {
   /// Creates a new [VersionWidget].
   const VersionWidget({
     super.key,
-    required this.version,
+    this.version,
     this.changelogUrl,
     this.showDate = true,
     this.defaultDate = '20250101',
@@ -50,20 +50,22 @@ class VersionWidget extends StatefulWidget {
 class _VersionWidgetState extends State<VersionWidget> {
   bool _isLatest = true;
   String _currentDate = '';
+  String _currentVersion = '';
   bool _showTooltip = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.showDate) {
-      _fetchDate();
+    if (widget.showDate || widget.version == null) {
+      _fetchChangelog();
     }
   }
 
-  Future<void> _fetchDate() async {
+  Future<void> _fetchChangelog() async {
     if (widget.changelogUrl == null) {
       setState(() {
         _currentDate = widget.defaultDate ?? '20250101';
+        _currentVersion = widget.version ?? '0.0.0';
       });
       return;
     }
@@ -72,16 +74,23 @@ class _VersionWidgetState extends State<VersionWidget> {
       final response = await http.get(Uri.parse(widget.changelogUrl!));
       final content = response.body;
 
-      // Extract date from CHANGELOG.md - first date in [x.x.x 20250120] format
-      final match = RegExp(r'\[[\d.]+ (\d{8})').firstMatch(content);
+      // Extract version and date from CHANGELOG.md - first entry in [x.x.x YYYYMMDD] format
+      final match = RegExp(r'\[([\d.]+) (\d{8})').firstMatch(content);
       if (match != null) {
         setState(() {
-          _currentDate = match.group(1)!;
+          _currentVersion = match.group(1)!;
+          _currentDate = match.group(2)!;
+        });
+      } else {
+        setState(() {
+          _currentVersion = widget.version ?? '0.0.0';
+          _currentDate = widget.defaultDate ?? '20250101';
         });
       }
     } catch (e) {
       debugPrint('Error fetching changelog: $e');
       setState(() {
+        _currentVersion = widget.version ?? '0.0.0';
         _currentDate = widget.defaultDate ?? '20250101';
       });
     }
@@ -90,8 +99,8 @@ class _VersionWidgetState extends State<VersionWidget> {
   @override
   Widget build(BuildContext context) {
     final displayText = widget.showDate
-        ? 'Version ${widget.version} - $_currentDate'
-        : 'Version ${widget.version}';
+        ? 'Version $_currentVersion - $_currentDate'
+        : 'Version $_currentVersion';
 
     return Stack(
       children: [
