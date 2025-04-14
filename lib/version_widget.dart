@@ -26,6 +26,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'package:version_widget/utils/compare_versions.dart';
 
 /// A widget that displays version information with optional changelog date and link.
 ///
@@ -153,7 +154,7 @@ class _VersionWidgetState extends State<VersionWidget> {
         setState(() {
           _currentVersion = widget.version ?? match.group(1)!;
           _currentDate = match.group(2)!;
-          _isLatest = _currentVersion == _latestVersion;
+          _isLatest = compareVersions(_currentVersion, _latestVersion) >= 0;
         });
       } else {
         setState(() {
