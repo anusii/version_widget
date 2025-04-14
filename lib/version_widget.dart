@@ -177,15 +177,18 @@ class _VersionWidgetState extends State<VersionWidget> {
   @override
   Widget build(BuildContext context) {
     // Construct the display text based on whether date should be shown.
-
     final displayText = widget.showDate
         ? 'Version $_currentVersion - $_currentDate'
         : 'Version $_currentVersion';
 
+    // Add available version information if current version is not latest
+    final tooltipText = _isLatest
+        ? 'This app is regularly updated to bring you the best experience. The latest version is always available from the website. Tap on the Version text here to visit the CHANGELOG in your browser and see a list of all changes.'
+        : 'A newer version ($_latestVersion) is available! Visit the website for update instructions.';
+
     return Stack(
       children: [
         // Main version text with click handling.
-
         GestureDetector(
           onTap: widget.changelogUrl == null
               ? null
@@ -198,17 +201,13 @@ class _VersionWidgetState extends State<VersionWidget> {
                   }
                 },
           // Show tooltip on tap down.
-
           onTapDown: (_) => setState(() => _showTooltip = true),
           // Hide tooltip on tap up.
-
           onTapUp: (_) => setState(() => _showTooltip = false),
           // Hide tooltip if tap is cancelled.
-
           onTapCancel: () => setState(() => _showTooltip = false),
           child: MouseRegion(
             // Show pointer cursor if changelog URL is available.
-
             cursor: widget.changelogUrl == null
                 ? SystemMouseCursors.basic
                 : SystemMouseCursors.click,
@@ -217,12 +216,12 @@ class _VersionWidgetState extends State<VersionWidget> {
               style: TextStyle(
                 color: _isLatest ? Colors.blue : Colors.red,
                 fontSize: 16,
+                fontWeight: _isLatest ? FontWeight.normal : FontWeight.bold,
               ),
             ),
           ),
         ),
         // Custom tooltip that appears above the version text.
-
         if (_showTooltip)
           Positioned(
             top: -60,
@@ -245,9 +244,7 @@ class _VersionWidgetState extends State<VersionWidget> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextSpan(
-                      text: _isLatest
-                          ? 'This app is regularly updated to bring you the best experience. The latest version is always available from the website. Tap on the Version text here to visit the CHANGELOG in your browser and see a list of all changes.'
-                          : 'A newer version is available! Visit the website for update instructions.',
+                      text: tooltipText,
                     ),
                   ],
                 ),
