@@ -98,29 +98,28 @@ class VersionWidget extends StatefulWidget {
 class _VersionWidgetState extends State<VersionWidget> {
   /// Indicates whether the current version is the latest version.
   /// Used to determine the color of the version text (blue for latest, red for outdated).
-
   bool _isLatest = true;
+
+  /// The latest version available from the changelog.
+  /// Used to compare with the current version to determine if an update is available.
+  String _latestVersion = '';
 
   /// The current release date in YYYYMMDD format.
   /// Either fetched from the changelog or using the default date.
-
   String _currentDate = '';
 
   /// The current version string (e.g., '0.0.9').
   /// Either provided through the widget or extracted from the changelog.
-
   String _currentVersion = '';
 
   /// Controls the visibility of the tooltip.
   /// Set to true when the user taps on the version text.
-
   bool _showTooltip = false;
 
   @override
   void initState() {
     super.initState();
     // Fetch changelog if we need the date or if no version was provided.
-
     if (widget.showDate || widget.version == null) {
       _fetchChangelog();
     }
@@ -131,12 +130,13 @@ class _VersionWidgetState extends State<VersionWidget> {
   /// 1. No changelog URL provided: Uses default values
   /// 2. Changelog fetch successful: Extracts version and date
   /// 3. Changelog fetch failed: Falls back to default values
-
   Future<void> _fetchChangelog() async {
     if (widget.changelogUrl == null) {
       setState(() {
         _currentDate = widget.defaultDate ?? '20250101';
         _currentVersion = widget.version ?? '0.0.0';
+        _latestVersion = _currentVersion;
+        _isLatest = true;
       });
       return;
     }
@@ -147,17 +147,20 @@ class _VersionWidgetState extends State<VersionWidget> {
 
       // Extract version and date from CHANGELOG.md - first entry in [x.x.x YYYYMMDD] format.
       // Example: [0.0.9 20250218].
-
       final match = RegExp(r'\[([\d.]+) (\d{8})').firstMatch(content);
       if (match != null) {
+        _latestVersion = match.group(1)!;
         setState(() {
-          _currentVersion = match.group(1)!;
+          _currentVersion = widget.version ?? match.group(1)!;
           _currentDate = match.group(2)!;
+          _isLatest = _currentVersion == _latestVersion;
         });
       } else {
         setState(() {
           _currentVersion = widget.version ?? '0.0.0';
           _currentDate = widget.defaultDate ?? '20250101';
+          _latestVersion = _currentVersion;
+          _isLatest = true;
         });
       }
     } catch (e) {
@@ -165,6 +168,8 @@ class _VersionWidgetState extends State<VersionWidget> {
       setState(() {
         _currentVersion = widget.version ?? '0.0.0';
         _currentDate = widget.defaultDate ?? '20250101';
+        _latestVersion = _currentVersion;
+        _isLatest = true;
       });
     }
   }
