@@ -118,12 +118,43 @@ class _VersionWidgetState extends State<VersionWidget> {
   /// Set to true when the user taps on the version text.
   bool _showTooltip = false;
 
+  bool _isChecking = true;
+  bool _hasInternet = true;
+
   @override
   void initState() {
     super.initState();
-    // Fetch changelog if we need the date or if no version was provided.
     if (widget.showDate || widget.version == null) {
       _fetchChangelog();
+    } else {
+      _isChecking = false;
+    }
+  }
+
+  String _formatDate(String dateStr) {
+    try {
+      final year = dateStr.substring(0, 4);
+      final month = dateStr.substring(4, 6);
+      final day = dateStr.substring(6, 8);
+
+      final months = {
+        '01': 'Jan',
+        '02': 'Feb',
+        '03': 'Mar',
+        '04': 'Apr',
+        '05': 'May',
+        '06': 'Jun',
+        '07': 'Jul',
+        '08': 'Aug',
+        '09': 'Sep',
+        '10': 'Oct',
+        '11': 'Nov',
+        '12': 'Dec'
+      };
+
+      return '$day ${months[month] ?? month} $year';
+    } catch (e) {
+      return dateStr;
     }
   }
 
@@ -139,6 +170,7 @@ class _VersionWidgetState extends State<VersionWidget> {
         _currentVersion = widget.version ?? '0.0.0';
         _latestVersion = _currentVersion;
         _isLatest = true;
+        _isChecking = false;
       });
       return;
     }
@@ -156,6 +188,8 @@ class _VersionWidgetState extends State<VersionWidget> {
           _currentVersion = widget.version ?? match.group(1)!;
           _currentDate = match.group(2)!;
           _isLatest = compareVersions(_currentVersion, _latestVersion) >= 0;
+          _isChecking = false;
+          _hasInternet = true;
         });
       } else {
         setState(() {
@@ -163,6 +197,8 @@ class _VersionWidgetState extends State<VersionWidget> {
           _currentDate = widget.defaultDate ?? '20250101';
           _latestVersion = _currentVersion;
           _isLatest = true;
+          _isChecking = false;
+          _hasInternet = true;
         });
       }
     } catch (e) {
@@ -172,18 +208,20 @@ class _VersionWidgetState extends State<VersionWidget> {
         _currentDate = widget.defaultDate ?? '20250101';
         _latestVersion = _currentVersion;
         _isLatest = true;
+        _isChecking = false;
+        _hasInternet = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Construct the display text based on whether date should be shown.
-    final displayText = widget.showDate
-        ? 'Version $_currentVersion - $_currentDate'
-        : 'Version $_currentVersion';
+    final displayText = _isChecking
+        ? 'Version $_currentVersion'
+        : widget.showDate && _hasInternet
+            ? 'Version $_currentVersion - ${_formatDate(_currentDate)}'
+            : 'Version $_currentVersion';
 
-    // Add available version information if current version is not latest
     final tooltipMessage = '''
 
     **Version:** ${_isLatest ? '''This app is regularly updated to bring you the best
@@ -213,9 +251,13 @@ class _VersionWidgetState extends State<VersionWidget> {
           child: Text(
             displayText,
             style: TextStyle(
-              color: _isLatest ? Colors.blue : Colors.red,
+              color: _isChecking
+                  ? Colors.grey
+                  : (_isLatest ? Colors.blue : Colors.red),
               fontSize: 16,
-              fontWeight: _isLatest ? FontWeight.normal : FontWeight.bold,
+              fontWeight: _isChecking
+                  ? FontWeight.normal
+                  : (_isLatest ? FontWeight.normal : FontWeight.bold),
             ),
           ),
         ),
