@@ -2,6 +2,12 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "args",
+      "rootUri": "file:///C:/Users/Mr.Kev/AppData/Local/Pub/Cache/hosted/pub.dev/args-2.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "async",
       "rootUri": "file:///C:/Users/Mr.Kev/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.12.0",
       "packageUri": "lib/",
@@ -50,6 +56,12 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "flutter_markdown",
+      "rootUri": "file:///C:/Users/Mr.Kev/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_markdown-0.7.7",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///C:/Users/Mr.Kev/dev/flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -96,6 +108,18 @@
       "rootUri": "file:///C:/Users/Mr.Kev/AppData/Local/Pub/Cache/hosted/pub.dev/lints-2.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "markdown",
+      "rootUri": "file:///C:/Users/Mr.Kev/AppData/Local/Pub/Cache/hosted/pub.dev/markdown-7.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "markdown_tooltip",
+      "rootUri": "file:///C:/Users/Mr.Kev/AppData/Local/Pub/Cache/hosted/pub.dev/markdown_tooltip-0.0.7",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
     },
     {
       "name": "matcher",
@@ -248,7 +272,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2025-04-13T23:43:32.557397Z",
+  "generated": "2025-04-15T00:17:47.854606Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/Users/Mr.Kev/dev/flutter",

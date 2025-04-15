@@ -27,6 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:version_widget/utils/compare_versions.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 /// A widget that displays version information with optional changelog date and link.
 ///
@@ -183,76 +184,42 @@ class _VersionWidgetState extends State<VersionWidget> {
         : 'Version $_currentVersion';
 
     // Add available version information if current version is not latest
-    final tooltipText = _isLatest
-        ? 'This app is regularly updated to bring you the best experience. The latest version is always available from the website. Tap on the Version text here to visit the CHANGELOG in your browser and see a list of all changes.'
-        : 'A newer version ($_latestVersion) is available! Visit the website for update instructions.';
+    final tooltipMessage = '''
 
-    return Stack(
-      children: [
-        // Main version text with click handling.
-        GestureDetector(
-          onTap: widget.changelogUrl == null
-              ? null
-              : () async {
-                  final Uri url = Uri.parse(widget.changelogUrl!);
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  } else {
-                    debugPrint('Could not launch ${widget.changelogUrl}');
-                  }
-                },
-          // Show tooltip on tap down.
-          onTapDown: (_) => setState(() => _showTooltip = true),
-          // Hide tooltip on tap up.
-          onTapUp: (_) => setState(() => _showTooltip = false),
-          // Hide tooltip if tap is cancelled.
-          onTapCancel: () => setState(() => _showTooltip = false),
-          child: MouseRegion(
-            // Show pointer cursor if changelog URL is available.
-            cursor: widget.changelogUrl == null
-                ? SystemMouseCursors.basic
-                : SystemMouseCursors.click,
-            child: Text(
-              displayText,
-              style: TextStyle(
-                color: _isLatest ? Colors.blue : Colors.red,
-                fontSize: 16,
-                fontWeight: _isLatest ? FontWeight.normal : FontWeight.bold,
-              ),
+    **Version:** ${_isLatest ? '''This app is regularly updated to bring you the best
+    experience. The latest version is always available from the website. **Tap** on
+    the **Version** text here to visit the *CHANGELOG* in your browser and see a list of all changes.
+    ''' : '*A newer version ($_latestVersion) is available!* Visit the website for instructions on updating your installation.'}
+
+    ''';
+
+    return MarkdownTooltip(
+      message: tooltipMessage,
+      child: GestureDetector(
+        onTap: widget.changelogUrl == null
+            ? null
+            : () async {
+                final Uri url = Uri.parse(widget.changelogUrl!);
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url);
+                } else {
+                  debugPrint('Could not launch ${widget.changelogUrl}');
+                }
+              },
+        child: MouseRegion(
+          cursor: widget.changelogUrl == null
+              ? SystemMouseCursors.basic
+              : SystemMouseCursors.click,
+          child: Text(
+            displayText,
+            style: TextStyle(
+              color: _isLatest ? Colors.blue : Colors.red,
+              fontSize: 16,
+              fontWeight: _isLatest ? FontWeight.normal : FontWeight.bold,
             ),
           ),
         ),
-        // Custom tooltip that appears above the version text.
-        if (_showTooltip)
-          Positioned(
-            top: -60,
-            left: 0,
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.black87,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: RichText(
-                text: TextSpan(
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
-                  children: [
-                    const TextSpan(
-                      text: 'Version: ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    TextSpan(
-                      text: tooltipText,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-      ],
+      ),
     );
   }
 }
