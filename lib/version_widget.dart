@@ -74,6 +74,14 @@ class VersionWidget extends StatefulWidget {
 
   final String? defaultDate;
 
+  /// Custom tooltip message to show when the version is the latest.
+  /// If not provided, uses a default message.
+  final String? isLatestTooltip;
+
+  /// Custom tooltip message to show when a newer version is available.
+  /// If not provided, uses a default message.
+  final String? notLatestTooltip;
+
   /// Creates a new [VersionWidget].
   /// All parameters are optional, but at least one of [version] or [changelogUrl]
   /// should be provided for meaningful display.
@@ -84,6 +92,8 @@ class VersionWidget extends StatefulWidget {
     this.changelogUrl,
     this.showDate = true,
     this.defaultDate = '20250101',
+    this.isLatestTooltip,
+    this.notLatestTooltip,
   });
 
   @override
@@ -222,12 +232,17 @@ class _VersionWidgetState extends State<VersionWidget> {
             ? 'Version $_currentVersion - ${_formatDate(_currentDate)}'
             : 'Version $_currentVersion';
 
+    final defaultLatestTooltip =
+        '''This app is regularly updated to bring you the best
+    experience. The latest version is always available from the website. **Tap** on
+    the **Version** text here to visit the *CHANGELOG* in your browser and see a list of all changes.''';
+
+    final defaultNotLatestTooltip =
+        '*A newer version ($_latestVersion) is available!* Visit the website for instructions on updating your installation.';
+
     final tooltipMessage = '''
 
-    **Version:** ${_isLatest ? '''This app is regularly updated to bring you the best
-    experience. The latest version is always available from the website. **Tap** on
-    the **Version** text here to visit the *CHANGELOG* in your browser and see a list of all changes.
-    ''' : '*A newer version ($_latestVersion) is available!* Visit the website for instructions on updating your installation.'}
+    **Version:** ${_isLatest ? widget.isLatestTooltip ?? defaultLatestTooltip : widget.notLatestTooltip ?? defaultNotLatestTooltip}
 
     ''';
 
