@@ -1,17 +1,20 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Sunday 2025-03-09 11:50:04 +1100 Graham Williams>
+// Time-stamp: <Sunday 2025-04-14 18:58:28 +1100 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
-/// Licensed under the GNU General Public License, Version 3 (the "License").
+/// Licensed under the MIT License (the "License").
 ///
-/// License: https://www.gnu.org/licenses/gpl-3.0.en.html.
+/// License: https://choosealicense.com/licenses/mit/.
 //
-// This program is free software: you can redistribute it and/or modify it under
-// the terms of the GNU General Public License as published by the Free Software
-// Foundation, either version 3 of the License, or (at your option) any later
-// version.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
 //
 // This program is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS

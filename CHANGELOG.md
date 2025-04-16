@@ -3,8 +3,19 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.5 20250417]
+- Added custom tooltip message support with isLatestTooltip and notLatestTooltip parameters
+- Improved tooltip formatting and readability
+- Removed unused _showTooltip state variable
+- Enhanced documentation for new features
+
+
 ## [0.0.4 20250416]
 - Improved tooltip formatting and readability
+- Added visual indicators for version checking state
+- Enhanced network connectivity handling
+- Added date formatting (DD MMM YYYY)
+- Improved error handling for network failures
 
 
 ## [0.0.3 20250416]
