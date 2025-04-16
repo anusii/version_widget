@@ -2,7 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.0.3 20240415]
+
+## [0.0.4 20250416]
+- Improved tooltip formatting and readability
+
+
+## [0.0.3 20250416]
 - Added custom tooltip message support
 - Improved UI for version status indication
 - Enhanced network connectivity handling
@@ -11,7 +16,7 @@ All notable changes to this project will be documented in this file.
 - Fixed bug in version comparison logic
 
 
-## [0.0.2 20240401]
+## [0.0.2 20250416]
 - Added tooltip functionality
 - Improved version comparison logic
 - Enhanced date formatting
@@ -20,7 +25,7 @@ All notable changes to this project will be documented in this file.
 - Improved documentation
 
 
-## [0.0.1 20240325]
+## [0.0.1 20250414]
 - Initial release
 - Basic version display functionality
 - Optional changelog date display

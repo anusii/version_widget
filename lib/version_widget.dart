@@ -76,10 +76,12 @@ class VersionWidget extends StatefulWidget {
 
   /// Custom tooltip message to show when the version is the latest.
   /// If not provided, uses a default message.
+
   final String? isLatestTooltip;
 
   /// Custom tooltip message to show when a newer version is available.
   /// If not provided, uses a default message.
+
   final String? notLatestTooltip;
 
   /// Creates a new [VersionWidget].
@@ -110,23 +112,23 @@ class VersionWidget extends StatefulWidget {
 class _VersionWidgetState extends State<VersionWidget> {
   /// Indicates whether the current version is the latest version.
   /// Used to determine the color of the version text (blue for latest, red for outdated).
+
   bool _isLatest = true;
 
   /// The latest version available from the changelog.
   /// Used to compare with the current version to determine if an update is available.
+
   String _latestVersion = '';
 
   /// The current release date in YYYYMMDD format.
   /// Either fetched from the changelog or using the default date.
+
   String _currentDate = '';
 
   /// The current version string (e.g., '0.0.9').
   /// Either provided through the widget or extracted from the changelog.
-  String _currentVersion = '';
 
-  /// Controls the visibility of the tooltip.
-  /// Set to true when the user taps on the version text.
-  bool _showTooltip = false;
+  String _currentVersion = '';
 
   bool _isChecking = true;
   bool _hasInternet = true;
@@ -173,6 +175,7 @@ class _VersionWidgetState extends State<VersionWidget> {
   /// 1. No changelog URL provided: Uses default values
   /// 2. Changelog fetch successful: Extracts version and date
   /// 3. Changelog fetch failed: Falls back to default values
+
   Future<void> _fetchChangelog() async {
     if (widget.changelogUrl == null) {
       setState(() {
@@ -191,6 +194,7 @@ class _VersionWidgetState extends State<VersionWidget> {
 
       // Extract version and date from CHANGELOG.md - first entry in [x.x.x YYYYMMDD] format.
       // Example: [0.0.9 20250218].
+
       final match = RegExp(r'\[([\d.]+) (\d{8})').firstMatch(content);
       if (match != null) {
         _latestVersion = match.group(1)!;
@@ -232,13 +236,19 @@ class _VersionWidgetState extends State<VersionWidget> {
             ? 'Version $_currentVersion - ${_formatDate(_currentDate)}'
             : 'Version $_currentVersion';
 
-    final defaultLatestTooltip =
-        '''This app is regularly updated to bring you the best
-    experience. The latest version is always available from the website. **Tap** on
-    the **Version** text here to visit the *CHANGELOG* in your browser and see a list of all changes.''';
+    final defaultLatestTooltip = '''
 
-    final defaultNotLatestTooltip =
-        '*A newer version ($_latestVersion) is available!* Visit the website for instructions on updating your installation.';
+    This app is regularly updated to bring you the best
+    experience. The latest version is always available from the website. **Tap** on
+    the **Version** text here to visit the *CHANGELOG* in your browser and see a list of all changes.
+    
+    ''';
+
+    final defaultNotLatestTooltip = '''
+
+    *A newer version ($_latestVersion) is available!* Visit the website for instructions on updating your installation.
+
+    ''';
 
     final tooltipMessage = '''
 
