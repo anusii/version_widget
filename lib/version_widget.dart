@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Sunday 2025-04-14 18:58:28 +1100 Graham Williams>
+// Time-stamp: <Thursday 2025-04-24 06:19:30 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -241,15 +241,16 @@ class _VersionWidgetState extends State<VersionWidget> {
 
     final defaultLatestTooltip = '''
 
-    This app is regularly updated to bring you the best
-    experience. The latest version is always available from the website. **Tap** on
-    the **Version** text here to visit the *CHANGELOG* in your browser and see a list of all changes.
-    
+    This app is regularly updated. The latest version is always available from
+    the app's website. **Tap** on the **Version** text to visit the *CHANGELOG*
+    in your browser to review the available version.
+
     ''';
 
     final defaultNotLatestTooltip = '''
 
-    *A newer version ($_latestVersion) is available!* Visit the website for instructions on updating your installation.
+    *Version ($_latestVersion) is available!* Visit the website for instructions
+    on updating your installation.
 
     ''';
 
