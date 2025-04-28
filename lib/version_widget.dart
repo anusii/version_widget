@@ -193,14 +193,25 @@ class _VersionWidgetState extends State<VersionWidget> {
       final response = await http.get(Uri.parse(widget.changelogUrl!));
       final content = response.body;
 
-      // Extract version and date from CHANGELOG.md - first entry in [x.x.x YYYYMMDD] format.
-      // Example: [0.0.9 20250218].
+      // Extract all version and date pairs from CHANGELOG.md
+      final matches = RegExp(r'\[([\d.]+) (\d{8})').allMatches(content);
 
-      final match = RegExp(r'\[([\d.]+) (\d{8})').firstMatch(content);
-      if (match != null) {
-        _latestVersion = match.group(1)!;
+      if (matches.isNotEmpty) {
+        // First match is the latest version
+        final latestMatch = matches.first;
+        _latestVersion = latestMatch.group(1)!;
+
+        // Find the date for the current version
+        String? currentVersionDate;
+        for (final match in matches) {
+          if (match.group(1) == _currentVersion) {
+            currentVersionDate = match.group(2);
+            break;
+          }
+        }
+
         setState(() {
-          _currentDate = match.group(2)!;
+          _currentDate = currentVersionDate ?? widget.defaultDate ?? '20250101';
           _isLatest = compareVersions(_currentVersion, _latestVersion) >= 0;
           _isChecking = false;
           _hasInternet = true;
