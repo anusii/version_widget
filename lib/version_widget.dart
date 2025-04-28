@@ -53,10 +53,8 @@ import 'package:markdown_tooltip/markdown_tooltip.dart';
 /// ```
 class VersionWidget extends StatefulWidget {
   /// The version string to display (e.g., '1.0.0').
-  /// If not provided, will be extracted from the changelog.
   /// The version should follow semantic versioning (e.g., '0.0.9').
-
-  final String? version;
+  final String version;
 
   /// The URL to the CHANGELOG.md file.
   /// If provided, the widget will attempt to extract the release date and version from it.
@@ -88,12 +86,12 @@ class VersionWidget extends StatefulWidget {
   final String? notLatestTooltip;
 
   /// Creates a new [VersionWidget].
-  /// All parameters are optional, but at least one of [version] or [changelogUrl]
-  /// should be provided for meaningful display.
+  /// The [version] parameter is required and should be the current version of the app.
+  /// All other parameters are optional.
 
   const VersionWidget({
     super.key,
-    this.version,
+    required this.version,
     this.changelogUrl,
     this.showDate = true,
     this.defaultDate = '20250101',
@@ -139,7 +137,8 @@ class _VersionWidgetState extends State<VersionWidget> {
   @override
   void initState() {
     super.initState();
-    if (widget.showDate || widget.version == null) {
+    _currentVersion = widget.version;
+    if (widget.showDate) {
       _fetchChangelog();
     } else {
       _isChecking = false;
@@ -183,7 +182,6 @@ class _VersionWidgetState extends State<VersionWidget> {
     if (widget.changelogUrl == null) {
       setState(() {
         _currentDate = widget.defaultDate ?? '20250101';
-        _currentVersion = widget.version ?? '0.0.0';
         _latestVersion = _currentVersion;
         _isLatest = true;
         _isChecking = false;
@@ -202,7 +200,6 @@ class _VersionWidgetState extends State<VersionWidget> {
       if (match != null) {
         _latestVersion = match.group(1)!;
         setState(() {
-          _currentVersion = widget.version ?? match.group(1)!;
           _currentDate = match.group(2)!;
           _isLatest = compareVersions(_currentVersion, _latestVersion) >= 0;
           _isChecking = false;
@@ -210,7 +207,6 @@ class _VersionWidgetState extends State<VersionWidget> {
         });
       } else {
         setState(() {
-          _currentVersion = widget.version ?? '0.0.0';
           _currentDate = widget.defaultDate ?? '20250101';
           _latestVersion = _currentVersion;
           _isLatest = true;
@@ -221,7 +217,6 @@ class _VersionWidgetState extends State<VersionWidget> {
     } catch (e) {
       debugPrint('Error fetching changelog: $e');
       setState(() {
-        _currentVersion = widget.version ?? '0.0.0';
         _currentDate = widget.defaultDate ?? '20250101';
         _latestVersion = _currentVersion;
         _isLatest = true;
