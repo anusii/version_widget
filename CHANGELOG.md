@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 
 
+## [0.0.7 20250424]
+- Fixed version date display to show the correct release date for the current version
+- Improved changelog parsing to extract all version-date pairs
+- Enhanced version matching logic to find the correct date for each version
+- Updated documentation to reflect the new date matching behavior
+
+
 ## [0.0.6 20250424]
 - Made version parameter required in VersionWidget
 - Removed version extraction from changelog
