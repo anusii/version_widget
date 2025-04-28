@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 
 
+
+
+
+## [0.0.6 20250424]
+- Made version parameter required in VersionWidget
+- Removed version extraction from changelog
+- Simplified changelog fetching logic
+- Updated documentation to reflect required version parameter
+- Improved state management for version handling
+
+
 ## [0.0.5 20250417]
 - Added custom tooltip message support with isLatestTooltip and notLatestTooltip parameters
 - Improved tooltip formatting and readability
