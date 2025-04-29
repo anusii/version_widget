@@ -18,6 +18,7 @@ A Flutter widget that displays version information with optional changelog date 
 - Visual indicators for version status
 - Network connectivity handling
 - Formatted date display (DD MMM YYYY)
+- Accurate date matching for current version
 
 ## Installation
 
@@ -39,7 +40,7 @@ import 'package:version_widget/version_widget.dart';
 
 // In your widget tree:
 VersionWidget(
-  version: '1.0.0',
+  version: '1.0.0',  // Required parameter
 )
 ```
 
@@ -47,7 +48,7 @@ With changelog support:
 
 ```dart
 VersionWidget(
-  version: '1.0.0',
+  version: '1.0.0',  // Required parameter
   changelogUrl: 'https://github.com/yourusername/yourrepo/raw/main/CHANGELOG.md',
   showDate: true,
   defaultDate: '20240101',
@@ -58,7 +59,7 @@ With custom tooltip messages:
 
 ```dart
 VersionWidget(
-  version: '1.0.0',
+  version: '1.0.0',  // Required parameter
   changelogUrl: 'https://github.com/yourusername/yourrepo/raw/main/CHANGELOG.md',
   isLatestTooltip: 'Your app is up to date! Enjoy the latest features.',
   notLatestTooltip: 'Version $_latestVersion is available with new features!',
@@ -80,9 +81,11 @@ The widget expects the CHANGELOG.md file to have dates in the following format:
 - Initial release
 ```
 
+The widget will automatically find the correct release date for the current version by matching against all version entries in the changelog.
+
 ## Properties
 
-- `version` (optional): The version string to display. If not provided, will be extracted from changelog.
+- `version` (required): The version string to display. Must be provided.
 - `changelogUrl` (optional): URL to the CHANGELOG.md file
 - `showDate` (optional): Whether to show the release date (defaults to true)
 - `defaultDate` (optional): Default date to show if changelog cannot be fetched (format: YYYYMMDD)
