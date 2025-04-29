@@ -49,30 +49,52 @@ class MyHomePage extends StatelessWidget {
                 padding: EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Text('Up-to-date Version (Blue)'),
+                    Text('HeadthPod Up-to-date Version (Blue)'),
                     SizedBox(height: 8),
                     VersionWidget(
-                      version: '0.0.7',
+                      version: '0.1.9',
                       changelogUrl:
                           'https://github.com/anusii/healthpod/blob/dev/CHANGELOG.md',
                       showDate: true,
-                      defaultDate: '20250429',
+                      defaultDate: '20250101',
                     ),
                   ],
                 ),
               ),
             ),
-            // Example 2: Outdated version (red)
+
             Card(
               margin: EdgeInsets.all(8),
               child: Padding(
                 padding: EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Text('Outdated Version (Red)'),
+                    Text('HeadthPod Outdated Version (Red)'),
                     SizedBox(height: 8),
                     VersionWidget(
-                      version: '0.0.5',
+                      version: '0.1.8',
+                      changelogUrl:
+                          'https://github.com/anusii/healthpod/blob/dev/CHANGELOG.md',
+                      showDate: true,
+                      defaultDate: '20250101',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // RattleNG.
+
+            Card(
+              margin: EdgeInsets.all(8),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Text('RattleNG Outdated Version (Red)'),
+                    SizedBox(height: 8),
+                    VersionWidget(
+                      version: '6.4.70',
                       changelogUrl:
                           'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
                       showDate: true,
@@ -82,41 +104,21 @@ class MyHomePage extends StatelessWidget {
                 ),
               ),
             ),
-            // Example 3: Checking state (grey)
+
             Card(
               margin: EdgeInsets.all(8),
               child: Padding(
                 padding: EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Text('Checking State (Grey)'),
+                    Text('RattleNG Up-to-date Version (Blue)'),
                     SizedBox(height: 8),
                     VersionWidget(
-                      version: '0.0.7',
+                      version: '6.4.72',
                       changelogUrl:
-                          'https://raw.githubusercontent.com/togaware/version_widget/main/CHANGELOG.md',
+                          'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
                       showDate: true,
-                      defaultDate: '20250429',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // Example 4: No internet connection
-            Card(
-              margin: EdgeInsets.all(8),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Text('No Internet Connection'),
-                    SizedBox(height: 8),
-                    VersionWidget(
-                      version: '0.0.7',
-                      changelogUrl:
-                          'https://raw.githubusercontent.com/nonexistent/repo/main/CHANGELOG.md',
-                      showDate: true,
-                      defaultDate: '20250429',
+                      defaultDate: '20250417',
                     ),
                   ],
                 ),
