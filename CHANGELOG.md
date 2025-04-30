@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 
 
+## [0.0.8 20250430]
+- Enhanced example app with multiple VersionWidget instances
+- Added demonstration of different version states (up-to-date, outdated)
+- Improved example UI with Material 3 design
+- Added real-world GitHub URLs for version comparison
+- Updated documentation with new example usage
+
+
 ## [0.0.7 20250429]
 - Fixed version date display to show the correct release date for the current version
 - Improved changelog parsing to extract all version-date pairs
