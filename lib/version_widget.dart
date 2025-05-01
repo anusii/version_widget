@@ -185,7 +185,7 @@ class _VersionWidgetState extends State<VersionWidget> {
   Future<void> _fetchChangelog() async {
     if (widget.changelogUrl == null) {
       setState(() {
-        _currentDate = widget.defaultDate ?? '20250101';
+        _currentDate = '';
         _latestVersion = _currentVersion;
         _isLatest = true;
         _isChecking = false;
@@ -215,14 +215,16 @@ class _VersionWidgetState extends State<VersionWidget> {
         }
 
         setState(() {
-          _currentDate = currentVersionDate ?? widget.defaultDate ?? '20250101';
+          // Don't use default date if version not found.
+
+          _currentDate = currentVersionDate ?? '';
           _isLatest = compareVersions(_currentVersion, _latestVersion) >= 0;
           _isChecking = false;
           _hasInternet = true;
         });
       } else {
         setState(() {
-          _currentDate = widget.defaultDate ?? '20250101';
+          _currentDate = '';
           _latestVersion = _currentVersion;
           _isLatest = true;
           _isChecking = false;
@@ -232,7 +234,7 @@ class _VersionWidgetState extends State<VersionWidget> {
     } catch (e) {
       debugPrint('Error fetching changelog: $e');
       setState(() {
-        _currentDate = widget.defaultDate ?? '20250101';
+        _currentDate = '';
         _latestVersion = _currentVersion;
         _isLatest = true;
         _isChecking = false;
