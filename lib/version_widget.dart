@@ -247,7 +247,7 @@ class _VersionWidgetState extends State<VersionWidget> {
   Widget build(BuildContext context) {
     final displayText = _isChecking
         ? 'Version $_currentVersion'
-        : widget.showDate && _hasInternet
+        : widget.showDate && _hasInternet && _currentDate.isNotEmpty
             ? 'Version $_currentVersion - ${_formatDate(_currentDate)}'
             : 'Version $_currentVersion';
 
