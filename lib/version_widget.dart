@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Thursday 2025-05-01 12:12:37 +1000 Graham Williams>
+// Time-stamp: <Thursday 2025-05-01 15:20:44 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -94,7 +94,7 @@ class VersionWidget extends StatefulWidget {
     required this.version,
     this.changelogUrl,
     this.showDate = true,
-    this.defaultDate = '20250101',
+    this.defaultDate = '20260101',
     this.isLatestTooltip,
     this.notLatestTooltip,
   });
@@ -251,22 +251,25 @@ class _VersionWidgetState extends State<VersionWidget> {
 
     final defaultLatestTooltip = '''
 
-    This app is regularly updated. The latest version is always available from
-    the app's website. **Tap** on the **Version** text to visit the *CHANGELOG*
-    in your browser to review the available version.
+    that is the latest version available.
 
     ''';
 
     final defaultNotLatestTooltip = '''
 
-    *Version ($_latestVersion) is available!* Visit the website for instructions
-    on updating your installation.
+    there is now a version **$_latestVersion** available. You should consider
+    updating to the latest version.
 
     ''';
 
     final tooltipMessage = '''
 
-    **Version:** ${_isLatest ? widget.isLatestTooltip ?? defaultLatestTooltip : widget.notLatestTooltip ?? defaultNotLatestTooltip}
+    You are running app **Version $_currentVersion.**
+
+    According to the app *CHANGELOG* ${_isLatest ? widget.isLatestTooltip ?? defaultLatestTooltip : widget.notLatestTooltip ?? defaultNotLatestTooltip}
+
+    **Tap** on the **Version** string in the card to visit the *CHANGELOG* in
+    your browser.
 
     ''';
 
