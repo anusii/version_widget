@@ -55,7 +55,7 @@ class MyHomePage extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       VersionWidget(
-                        version: '0.0.8',
+                        version: '0.0.9',
                         changelogUrl:
                             'https://github.com/anusii/version_widget/blob/main/CHANGELOG.md',
                       ),

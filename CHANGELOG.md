@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-
-
-
+## [0.0.9 20250501]
+- Update example to explain and demonstrate the package. [gjw]
+- Remove the default date. [kev]
 
 ## [0.0.8 20250430]
 - Enhanced example app with multiple VersionWidget instances
@@ -68,4 +68,4 @@ All notable changes to this project will be documented in this file.
 - Optional changelog date display
 - Automatic date extraction from CHANGELOG.md files
 - Clickable link to view the full changelog
-- Example app demonstrating usage 
+- Example app demonstrating usage

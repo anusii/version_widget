@@ -1,6 +1,6 @@
 name: version_widget
 description: A Flutter widget that displays version information with optional changelog date and link.
-version: 0.0.8
+version: 0.0.9
 homepage: https://github.com/yourusername/version_widget
 
 environment:
@@ -20,4 +20,4 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
-  uses-material-design: true 
+  uses-material-design: true
