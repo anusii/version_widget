@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Thursday 2025-04-24 06:19:30 +1000 Graham Williams>
+// Time-stamp: <Thursday 2025-05-01 12:12:37 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -149,7 +149,11 @@ class _VersionWidgetState extends State<VersionWidget> {
     try {
       final year = dateStr.substring(0, 4);
       final month = dateStr.substring(4, 6);
-      final day = dateStr.substring(6, 8);
+      String day = dateStr.substring(6, 8);
+
+      // Remove leading zero for the day. (gjw 20250501)
+
+      if (day.startsWith('0') && day.length > 1) day = day.substring(1);
 
       final months = {
         '01': 'Jan',
