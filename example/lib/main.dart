@@ -28,104 +28,178 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(title),
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Version Widget Examples:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            // Example 1: Up-to-date version (blue)
-            Card(
-              margin: EdgeInsets.all(8),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Text('HeadthPod Up-to-date Version (Blue)'),
-                    SizedBox(height: 8),
-                    VersionWidget(
-                      version: '0.1.9',
-                      changelogUrl:
-                          'https://github.com/anusii/healthpod/blob/dev/CHANGELOG.md',
-                      showDate: true,
-                      defaultDate: '20250101',
-                    ),
-                  ],
+      body: const Row(
+        children: [
+          Column(
+            children: <Widget>[
+              // Example 1: Up-to-date version (blue)
+              Card(
+                margin: EdgeInsets.all(8),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'github.com/anusii/version_widget.git\n'
+                        'Specify the current version.\n'
+                        'The date is from the CHANGELOG.\n'
+                        'Expect blue version and correct date.\n'
+                        'Tap the string to see the CHANGELOG.',
+                      ),
+                      SizedBox(height: 8),
+                      VersionWidget(
+                        version: '0.0.8',
+                        changelogUrl:
+                            'https://github.com/anusii/version_widget/blob/main/CHANGELOG.md',
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            Card(
-              margin: EdgeInsets.all(8),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Text('HeadthPod Outdated Version (Red)'),
-                    SizedBox(height: 8),
-                    VersionWidget(
-                      version: '0.1.8',
-                      changelogUrl:
-                          'https://github.com/anusii/healthpod/blob/dev/CHANGELOG.md',
-                      showDate: true,
-                      defaultDate: '20250101',
-                    ),
-                  ],
+              Card(
+                margin: EdgeInsets.all(8),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'github.com/anusii/version_widget.git\n'
+                        'Specify an old version.\n'
+                        'The date is from the CHANGELOG.\n'
+                        'Expect red version and correct date.\n'
+                        'Tap the string to see the CHANGELOG.',
+                      ),
+                      SizedBox(height: 8),
+                      VersionWidget(
+                        version: '0.0.1',
+                        changelogUrl:
+                            'https://github.com/anusii/version_widget/blob/main/CHANGELOG.md',
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-
-            // RattleNG.
-
-            Card(
-              margin: EdgeInsets.all(8),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Text('RattleNG Outdated Version (Red)'),
-                    SizedBox(height: 8),
-                    VersionWidget(
-                      version: '6.4.70',
-                      changelogUrl:
-                          'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
-                      showDate: true,
-                      defaultDate: '20250417',
-                    ),
-                  ],
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              Card(
+                margin: EdgeInsets.all(8),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'github.com/gjwgit/rattleng\n'
+                        'Specifying an old version.\n'
+                        'The date here is from the CHANGELOG.\n'
+                        'Expect bold red version and correct date.\n'
+                        'Tap the string to see the CHANGELOG.',
+                      ),
+                      SizedBox(height: 8),
+                      VersionWidget(
+                        version: '6.2.1',
+                        changelogUrl:
+                            'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
+                        showDate: true,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            Card(
-              margin: EdgeInsets.all(8),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Text('RattleNG Up-to-date Version (Blue)'),
-                    SizedBox(height: 8),
-                    VersionWidget(
-                      version: '6.4.72',
-                      changelogUrl:
-                          'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
-                      showDate: true,
-                      defaultDate: '20250417',
-                    ),
-                  ],
+              // An out of date version number is tested with no date but with a
+              // username in the CHANGELOG.
+              Card(
+                margin: EdgeInsets.all(8),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'github.com/gjwgit/rattleng\n'
+                        'Old version in CHANGELOG without date.\n'
+                        'We should thus not see a date here.\n'
+                        'Expect bold red version and no date.\n'
+                        'Tap the string to see the CHANGELOG.',
+                      ),
+                      SizedBox(height: 8),
+                      VersionWidget(
+                        version: '6.1.14',
+                        changelogUrl:
+                            'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
+                        showDate: true,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              Card(
+                margin: EdgeInsets.all(8),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'github.com/gjwgit/rattleng\n'
+                        'Future version not in the CHANGELOG.\n'
+                        'We should thus not see a date here.\n'
+                        'Expect blue version and no date.\n'
+                        'Tap the string to see the CHANGELOG.',
+                      ),
+                      SizedBox(height: 8),
+                      VersionWidget(
+                        version: '7.0.0',
+                        changelogUrl:
+                            'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
+                        showDate: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // An out of date version number is tested with no date but with a
+              // username in the CHANGELOG.
+              Card(
+                margin: EdgeInsets.all(8),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'RattleNG @ github.com/gjwgit/rattleng\n'
+                        'Old version not in the CHANGELOG.\n'
+                        'We should thus not see a date here.\n'
+                        'Expect bold red version and no date.\n'
+                        'Tap the string to see the CHANGELOG.',
+                      ),
+                      SizedBox(height: 8),
+                      VersionWidget(
+                        version: '5.0.0',
+                        changelogUrl:
+                            'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
+                        showDate: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

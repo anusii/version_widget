@@ -2,7 +2,7 @@
 
 A Flutter widget that displays version information with optional changelog date and link. This widget is designed to be used across multiple apps to maintain consistent version display and changelog access.
 
-![image](https://github.com/user-attachments/assets/6b41e58b-73dd-4a24-b346-6c955205717f)
+![image](assets/screenshots/example.png)
 
 ## Features
 
