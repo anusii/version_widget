@@ -1,7 +1,7 @@
 name: version_widget
 description: A Flutter widget that displays version information with optional changelog date and link.
 version: 0.0.9
-homepage: https://github.com/yourusername/version_widget
+homepage: https://github.com/anusii/version_widget
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

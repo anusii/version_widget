@@ -1,6 +1,9 @@
 # Version Widget
 
-A Flutter widget that displays version information with optional changelog date and link. This widget is designed to be used across multiple apps to maintain consistent version display and changelog access.
+A Flutter widget that displays version information with optional
+changelog date and link. This widget is designed to be used across
+multiple apps to maintain consistent version display and changelog
+access.
 
 ![image](assets/screenshots/example.png)
 
@@ -24,9 +27,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  version_widget:
-    git:
-      url: https://github.com/yourusername/version_widget.git
+  version_widget: ^0.0.9
 ```
 
 ## Usage
