@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2 20250514]
+
+- Review and update doco.
+
 ## [1.0.1 20250514]
 
 - Review and fix typos.
