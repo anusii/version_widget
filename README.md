@@ -15,7 +15,7 @@ changelog date and link. This widget is designed to be used across
 multiple apps to maintain consistent version display and changelog
 access.
 
-![image](https://github.com/anusii/version_widget/blob/main/assets/screenshots/example.png)
+![screenshot](https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/assets/screenshots/example.png)
 
 ## Features
 
