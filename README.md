@@ -1,9 +1,9 @@
 [![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
 
-[![Last Updated](https://img.shields.io/github/last-commit/anusii/version_widget?label=last%20updated)](https://github.com/anusii/version_widget/commits/dev/)
-[![Git Version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/anusii/version_widget/master/pubspec.yaml&query=$.version&label=version&logo=github)](https://github.com/anusii/version_widget/blob/dev/CHANGELOG.md)
 [![Pub Version](https://img.shields.io/pub/v/version_widget?label=pub.dev&labelColor=333940&logo=flutter)](https://pub.dev/packages/version_widget)
+[![GitHub Last Updated](https://img.shields.io/github/last-commit/anusii/version_widget?label=last%20updated&logo=github)](https://github.com/anusii/version_widget/commits/main/)
+[![GitHub Version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/anusii/version_widget/master/pubspec.yaml&query=$.version&label=version&logo=github)](https://github.com/anusii/version_widget/blob/dev/CHANGELOG.md)
 [![GitHub Issues](https://img.shields.io/github/issues/anusii/version_widget)](https://github.com/anusii/version_widget/issues)
 [![GitHub License](https://img.shields.io/github/license/anusii/version_widget)](https://raw.githubusercontent.com/anusii/version_widget/main/LICENSE)
 [![GitHub commit activity (main)](https://img.shields.io/github/commit-activity/w/anusii/version_widget/main)](https://github.com/anusii/version_widget/commits/main/)
