@@ -2,11 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0 20250514]
+
+- Push to first version release [gjw]
+- Minor update to README [gjw]
+
 ## [0.0.9 20250501]
+
 - Update example to explain and demonstrate the package. [gjw]
 - Remove the default date. [kev]
 
 ## [0.0.8 20250430]
+
 - Enhanced example app with multiple VersionWidget instances
 - Added demonstration of different version states (up-to-date, outdated)
 - Improved example UI with Material 3 design
@@ -15,6 +22,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## [0.0.7 20250429]
+
 - Fixed version date display to show the correct release date for the current version
 - Improved changelog parsing to extract all version-date pairs
 - Enhanced version matching logic to find the correct date for each version
@@ -22,6 +30,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## [0.0.6 20250428]
+
 - Made version parameter required in VersionWidget
 - Removed version extraction from changelog
 - Simplified changelog fetching logic
@@ -30,6 +39,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## [0.0.5 20250417]
+
 - Added custom tooltip message support with isLatestTooltip and notLatestTooltip parameters
 - Improved tooltip formatting and readability
 - Removed unused _showTooltip state variable
@@ -37,6 +47,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## [0.0.4 20250416]
+
 - Improved tooltip formatting and readability
 - Added visual indicators for version checking state
 - Enhanced network connectivity handling
@@ -45,6 +56,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## [0.0.3 20250416]
+
 - Added custom tooltip message support
 - Improved UI for version status indication
 - Enhanced network connectivity handling
@@ -54,6 +66,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## [0.0.2 20250416]
+
 - Added tooltip functionality
 - Improved version comparison logic
 - Enhanced date formatting
@@ -63,6 +76,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## [0.0.1 20250414]
+
 - Initial release
 - Basic version display functionality
 - Optional changelog date display

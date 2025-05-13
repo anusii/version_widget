@@ -36,7 +36,7 @@ Add the package to you app's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  version_widget: ^0.0.10
+  version_widget: ^1.0.0
 ```
 
 ## Usage
