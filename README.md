@@ -6,7 +6,7 @@
 [![Pub Version](https://img.shields.io/pub/v/version_widget?label=pub.dev&labelColor=333940&logo=flutter)](https://pub.dev/packages/version_widget)
 [![GitHub Issues](https://img.shields.io/github/issues/anusii/version_widget)](https://github.com/anusii/version_widget/issues)
 [![GitHub License](https://img.shields.io/github/license/anusii/version_widget)](https://raw.githubusercontent.com/anusii/version_widget/main/LICENSE)
-[![GitHub commit activity (dev)](https://img.shields.io/github/commit-activity/w/anusii/version_widget/dev)](https://github.com/anusii/version_widget/commits/main/)
+[![GitHub commit activity (main)](https://img.shields.io/github/commit-activity/w/anusii/version_widget/dev)](https://github.com/anusii/version_widget/commits/main/)
 
 # Version Widget
 

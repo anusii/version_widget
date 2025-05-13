@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1 20250514]
+
+- Review and fix typos.
+
 ## [1.0.0 20250514]
 
 - Push to first version release [gjw]
