@@ -2,11 +2,11 @@
 [![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
 
 [![Last Updated](https://img.shields.io/github/last-commit/anusii/version_widget?label=last%20updated)](https://github.com/anusii/version_widget/commits/dev/)
-[![Flutter Version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/anusii/version_widget/master/pubspec.yaml&query=$.version&label=version)](https://github.com/anusii/version_widget/blob/dev/CHANGELOG.md)
+[![Git Version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/anusii/version_widget/master/pubspec.yaml&query=$.version&label=version)](https://github.com/anusii/version_widget/blob/dev/CHANGELOG.md)
 [![Pub Version](https://img.shields.io/pub/v/version_widget?label=pub.dev&labelColor=333940&logo=flutter)](https://pub.dev/packages/version_widget)
 [![GitHub Issues](https://img.shields.io/github/issues/anusii/version_widget)](https://github.com/anusii/version_widget/issues)
 [![GitHub License](https://img.shields.io/github/license/anusii/version_widget)](https://raw.githubusercontent.com/anusii/version_widget/main/LICENSE)
-[![GitHub commit activity (dev)](https://img.shields.io/github/commit-activity/w/anusii/version_widget/dev)](https://github.com/gjwgit/rattle/commits/dev/)
+[![GitHub commit activity (dev)](https://img.shields.io/github/commit-activity/w/anusii/version_widget/dev)](https://github.com/anusii/version_widget/commits/dev/)
 
 # Version Widget
 
