@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Thursday 2025-07-17 10:32:38 +1000 Graham Williams>
+// Time-stamp: <Thursday 2025-07-17 10:49:49 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -257,7 +257,7 @@ class _VersionWidgetState extends State<VersionWidget> {
             ? 'Version $_currentVersion - ${_formatDate(_currentDate)}'
             : 'Version $_currentVersion';
 
-    final defaultLatestTooltip = '''
+    const defaultLatestTooltip = '''
 
     that is the latest version available.
 
