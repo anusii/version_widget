@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Thursday 2025-05-01 15:20:44 +1000 Graham Williams>
+// Time-stamp: <Thursday 2025-07-17 10:20:04 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -85,6 +85,10 @@ class VersionWidget extends StatefulWidget {
 
   final String? notLatestTooltip;
 
+  /// Allow the user to override the [fontSize] to suit the app.
+
+  final double? fontSize;
+
   /// Creates a new [VersionWidget].
   /// The [version] parameter is required and should be the current version of the app.
   /// All other parameters are optional.
@@ -97,6 +101,7 @@ class VersionWidget extends StatefulWidget {
     this.defaultDate = '20260101',
     this.isLatestTooltip,
     this.notLatestTooltip,
+    this.fontSize,
   });
 
   @override
@@ -133,6 +138,10 @@ class _VersionWidgetState extends State<VersionWidget> {
 
   bool _isChecking = true;
   bool _hasInternet = true;
+
+  /// The default [fontSize] is 16.
+
+  double _fontSize = 16.0;
 
   @override
   void initState() {
@@ -298,7 +307,7 @@ class _VersionWidgetState extends State<VersionWidget> {
               color: _isChecking
                   ? Colors.grey
                   : (_isLatest ? Colors.blue : Colors.red),
-              fontSize: 16,
+              fontSize: _fontSize,
               fontWeight: _isChecking
                   ? FontWeight.normal
                   : (_isLatest ? FontWeight.normal : FontWeight.bold),
