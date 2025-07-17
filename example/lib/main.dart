@@ -55,9 +55,9 @@ class MyHomePage extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       VersionWidget(
-                        version: '1.0.2',
+                        version: '1.0.3',
                         changelogUrl:
-                            'https://github.com/anusii/version_widget/blob/main/CHANGELOG.md',
+                            'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
                       ),
                     ],
                   ),
@@ -79,9 +79,10 @@ class MyHomePage extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       VersionWidget(
-                        version: '0.0.1',
+                        version: '1.0.1',
                         changelogUrl:
-                            'https://github.com/anusii/version_widget/blob/main/CHANGELOG.md',
+                            'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
+                        fontSize: 18.0,
                       ),
                     ],
                   ),
@@ -108,8 +109,9 @@ class MyHomePage extends StatelessWidget {
                       VersionWidget(
                         version: '6.2.1',
                         changelogUrl:
-                            'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
+                            'https://raw.githubusercontent.com/gjwgit/rattleng/refs/heads/dev/CHANGELOG.md',
                         showDate: true,
+                        fontSize: 14.0,
                       ),
                     ],
                   ),
@@ -135,8 +137,9 @@ class MyHomePage extends StatelessWidget {
                       VersionWidget(
                         version: '6.1.14',
                         changelogUrl:
-                            'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
+                            'https://raw.githubusercontent.com/gjwgit/rattleng/refs/heads/dev/CHANGELOG.md',
                         showDate: true,
+                        fontSize: 12.0,
                       ),
                     ],
                   ),
@@ -163,8 +166,9 @@ class MyHomePage extends StatelessWidget {
                       VersionWidget(
                         version: '7.0.0',
                         changelogUrl:
-                            'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
+                            'https://raw.githubusercontent.com/gjwgit/rattleng/refs/heads/dev/CHANGELOG.md',
                         showDate: true,
+                        fontSize: 10.0,
                       ),
                     ],
                   ),
@@ -190,8 +194,9 @@ class MyHomePage extends StatelessWidget {
                       VersionWidget(
                         version: '5.0.0',
                         changelogUrl:
-                            'https://github.com/gjwgit/rattleng/blob/dev/CHANGELOG.md',
+                            'https://raw.githubusercontent.com/gjwgit/rattleng/refs/heads/dev/CHANGELOG.md',
                         showDate: true,
+                        fontSize: 8.0,
                       ),
                     ],
                   ),
