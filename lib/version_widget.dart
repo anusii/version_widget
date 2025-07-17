@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Thursday 2025-07-17 10:20:04 +1000 Graham Williams>
+// Time-stamp: <Thursday 2025-07-17 10:32:38 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -54,6 +54,7 @@ import 'package:markdown_tooltip/markdown_tooltip.dart';
 class VersionWidget extends StatefulWidget {
   /// The version string to display (e.g., '1.0.0').
   /// The version should follow semantic versioning (e.g., '0.0.9').
+
   final String version;
 
   /// The URL to the CHANGELOG.md file.
@@ -101,7 +102,7 @@ class VersionWidget extends StatefulWidget {
     this.defaultDate = '20260101',
     this.isLatestTooltip,
     this.notLatestTooltip,
-    this.fontSize,
+    this.fontSize = 16.0,
   });
 
   @override
@@ -138,10 +139,6 @@ class _VersionWidgetState extends State<VersionWidget> {
 
   bool _isChecking = true;
   bool _hasInternet = true;
-
-  /// The default [fontSize] is 16.
-
-  double _fontSize = 16.0;
 
   @override
   void initState() {
@@ -307,7 +304,7 @@ class _VersionWidgetState extends State<VersionWidget> {
               color: _isChecking
                   ? Colors.grey
                   : (_isLatest ? Colors.blue : Colors.red),
-              fontSize: _fontSize,
+              fontSize: widget.fontSize,
               fontWeight: _isChecking
                   ? FontWeight.normal
                   : (_isLatest ? FontWeight.normal : FontWeight.bold),
