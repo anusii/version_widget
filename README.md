@@ -58,11 +58,15 @@ With CHANGELOG support:
 ```dart
 VersionWidget(
   version: '1.0.0',
-  changelogUrl: 'https://github.com/yourusername/yourrepo/raw/main/CHANGELOG.md',
+  changelogUrl: 'https://raw.githubusercontent.com/yourusername/yourrepo/dev/CHANGELOG.md',
   showDate: true,
   defaultDate: '20240101',
 )
 ```
+
+Note that you should specify the raw domain which may avoid a missing
+CORS header issue from github.
+
 
 With custom tooltip messages:
 
