@@ -43,6 +43,12 @@ import 'package:markdown_tooltip/markdown_tooltip.dart';
 /// 2. Semi-automatic mode: Uses provided version but fetches date from CHANGELOG
 /// 3. Manual mode: Uses provided version and default date
 ///
+/// Styling of the version string is offered in two modes:
+/// 1. Automatic mode: version styled with colour denoting package statu
+/// (blue: up to date, red: newer version availbale, grey: version
+/// being checked).
+/// 2. Manual mode: user specified TextStyle().
+///
 /// Example usage:
 /// ```dart
 /// VersionWidget(
@@ -90,6 +96,10 @@ class VersionWidget extends StatefulWidget {
 
   final double? fontSize;
 
+  /// Allow the user to specify the full [userTextStyle] to suit the app.
+
+  final TextStyle? userTextStyle;
+
   /// Creates a new [VersionWidget].
   /// The [version] parameter is required and should be the current version of the app.
   /// All other parameters are optional.
@@ -103,6 +113,7 @@ class VersionWidget extends StatefulWidget {
     this.isLatestTooltip,
     this.notLatestTooltip,
     this.fontSize = 16.0,
+    this.userTextStyle,
   });
 
   @override
@@ -300,15 +311,17 @@ class _VersionWidgetState extends State<VersionWidget> {
               : SystemMouseCursors.click,
           child: Text(
             displayText,
-            style: TextStyle(
-              color: _isChecking
-                  ? Colors.grey
-                  : (_isLatest ? Colors.blue : Colors.red),
-              fontSize: widget.fontSize,
-              fontWeight: _isChecking
-                  ? FontWeight.normal
-                  : (_isLatest ? FontWeight.normal : FontWeight.bold),
-            ),
+            style: (widget.userTextStyle != null)
+                ? widget.userTextStyle
+                : TextStyle(
+                    color: _isChecking
+                        ? Colors.grey
+                        : (_isLatest ? Colors.blue : Colors.red),
+                    fontSize: widget.fontSize,
+                    fontWeight: _isChecking
+                        ? FontWeight.normal
+                        : (_isLatest ? FontWeight.normal : FontWeight.bold),
+                  ),
           ),
         ),
       ),
