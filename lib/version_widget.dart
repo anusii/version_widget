@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Thursday 2025-07-17 10:49:49 +1000 Graham Williams>
+// Time-stamp: <Tuesday 2025-07-22 12:23:39 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -39,14 +39,16 @@ import 'package:markdown_tooltip/markdown_tooltip.dart';
 /// view the full changelog.
 ///
 /// The widget supports three modes of operation:
+///
 /// 1. Automatic mode: Fetches both version and date from a CHANGELOG.md file
 /// 2. Semi-automatic mode: Uses provided version but fetches date from CHANGELOG
 /// 3. Manual mode: Uses provided version and default date
 ///
 /// Styling of the version string is offered in two modes:
+///
 /// 1. Automatic mode: version styled with colour denoting package statu
-/// (blue: up to date, red: newer version availbale, grey: version
-/// being checked).
+///    (blue: up to date, red: newer version availbale, grey: version
+///     being checked).
 /// 2. Manual mode: user specified TextStyle().
 ///
 /// Example usage:
