@@ -1,0 +1,41 @@
+Makefile
+support/
+
+# From .gitignore
+
+*~
+doc/
+
+# Flutter/Dart specific
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+.dart_tool/
+build/
+.fvm/
+
+# Platform specific folders
+android/
+ios/
+linux/
+macos/
+windows/
+web/
+
+# IDE specific
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Coverage
+coverage/
+*.lcov
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+*.swo
