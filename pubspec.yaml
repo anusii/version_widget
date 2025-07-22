@@ -1,6 +1,6 @@
 name: version_widget
 description: A Flutter widget that displays version information with optional changelog date and link.
-version: 1.0.3
+version: 1.0.4
 repository: https://github.com/anusii/version_widget
 homepage: https://github.com/anusii/version_widget
 
@@ -16,8 +16,6 @@ dependencies:
   url_launcher: ^6.1.14
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   flutter_lints: ^2.0.0
 
 flutter:
