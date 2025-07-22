@@ -9,6 +9,7 @@ utilised by the flutter version_widget package.
 
 ## 1.1 Review and Consolidate
 
+- Support user text style for Version string [1.0.4 20250722 jesscmoore]
 - Support VersionWidget fontSize [1.0.3 20250717 gjw]
 - Review and update doco [1.0.2 20250514 gjw]
 - Review and fix typos [1.0.1 20250514 gjw]

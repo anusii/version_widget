@@ -27,10 +27,12 @@
 /// Authors: Kevin Wang.
 
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 import 'package:http/http.dart' as http;
-import 'package:version_widget/utils/compare_versions.dart';
 import 'package:markdown_tooltip/markdown_tooltip.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'package:version_widget/utils/compare_versions.dart';
 
 /// A widget that displays version information with optional changelog date and link.
 ///
