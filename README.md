@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD041 -->
+
 [![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
 
@@ -67,7 +69,6 @@ VersionWidget(
 Note that you should specify the raw domain which may avoid a missing
 CORS header issue from github.
 
-
 With custom tooltip messages:
 
 ```dart
@@ -108,7 +109,8 @@ changelog.
 - `version` (required): The version string to display. Must be provided.
 - `changelogUrl` (optional): URL to the CHANGELOG.md file
 - `showDate` (optional): Whether to show the release date (defaults to true)
-- `defaultDate` (optional): Default date to show if changelog cannot be fetched (format: YYYYMMDD)
+- `defaultDate` (optional): Default date to show if changelog cannot
+  be fetched (format: YYYYMMDD)
 - `isLatestTooltip` (optional): Custom message to show when version is latest
 - `notLatestTooltip` (optional): Custom message to show when newer version is available
 

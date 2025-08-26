@@ -188,7 +188,7 @@ class _VersionWidgetState extends State<VersionWidget> {
         '09': 'Sep',
         '10': 'Oct',
         '11': 'Nov',
-        '12': 'Dec'
+        '12': 'Dec',
       };
 
       return '$day ${months[month] ?? month} $year';
