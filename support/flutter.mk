@@ -2,7 +2,7 @@
 #
 # Makefile template for Flutter
 #
-# Copyright 2021 (c) Graham.Williams@togaware.com
+# Copyright 2021-2025 (c) Graham.Williams@togaware.com
 #
 # License: Creative Commons Attribution-ShareAlike 4.0 International.
 #
@@ -14,7 +14,7 @@
 #   Trivial update or bug fix
 
 ifeq ($(VER),)
-  VER = $(shell egrep '^version:' pubspec.yaml | cut -d' ' -f2)
+  VER = $(if $(wildcard pubspec.yaml),$(shell egrep '^version:' pubspec.yaml | cut -d' ' -f2),)
 endif
 
 define FLUTTER_HELP
@@ -35,6 +35,8 @@ flutter:
   import_order_fix  Run import order fixing.
 
   pubspec         Choose actual/local pubspec using meld.
+  pubspec.local   Overwrite with local pubspec.
+  pubspec.actual  Overwrite with actual pubspec.
 
   fix             Run `dart fix --apply`.
   format          Run `dart format`.
@@ -73,7 +75,7 @@ help::
 
 .PHONY: chrome
 chrome:
-	flutter run -d chrome
+	flutter run -d chrome --release
 
 # 20220503 gjw The following fails if the target files already exist -
 # just needs to be run once.
@@ -124,7 +126,7 @@ linux_config:
 	flutter config --enable-linux-desktop
 
 .PHONY: prep
-prep: analyze fix import_order_fix format ignore license todo depend
+prep: analyze fix import_order_fix format ignore license todo markdown depend bakfind test
 	@echo "ADVISORY: make tests docs"
 	@echo $(SEPARATOR)
 
@@ -138,6 +140,15 @@ SEPARATOR="---------------------------------------------------------------------
 .PHONY: pubspec
 pubspec:
 	meld pubspec.yaml.actual pubspec.yaml pubspec.yaml.local
+
+.PHONY: pubspec.local
+pubspec.local:
+	cp --backup pubspec.yaml pubspec.yaml.actual
+	cp --backup pubspec.yaml.local pubspec.yaml
+
+.PHONY: pubspec.actual
+pubspec.actual:
+	cp --backup pubspec.yaml.actual pubspec.yaml
 
 .PHONY: fix
 fix:
@@ -153,6 +164,12 @@ format:
 
 # My emacs IDE is starting to add imports of backups automagically!
 
+.PHONY: bakfind
+bakfind:
+	@echo "Find imports of backups.\n"
+	@-! find lib -type f -name '*.dart' -exec grep '\.dart\.~\([0-9]\)~' {} +
+	@echo $(SEPARATOR)
+
 .PHONY: bakfix
 bakfix:
 	@echo "Find and fix imports of backups."
@@ -165,7 +182,7 @@ tests:: test qtest
 .PHONY: analyze
 analyze:
 	@echo "Futter ANALYZE"
-	-flutter analyze lib
+	-flutter analyze
 #	dart run custom_lint
 	@echo $(SEPARATOR)
 
@@ -173,26 +190,37 @@ analyze:
 
 .PHONY: depend
 depend:
-	@echo "Review pubspec.yaml dependencies."
+	@echo "Dart: REVIEW DEPENDENCIES."
 	-dependency_validator
+	@echo $(SEPARATOR)
+
+
+# dart pub global activate dependency_validator
+
+.PHONY: markdown
+markdown:
+	@echo "Markdown: MARKDOWN FORMAT CHECK."
+	-markdownlint --disable MD036 -- *.md lib assets installers
+	@echo
 	@echo $(SEPARATOR)
 
 .PHONY: ignore
 ignore:
 	@echo "Files that override lint checks with IGNORE:\n"
-	@-if grep -r -n ignore: lib; then exit 1; else exit 0; fi
+	@-if grep -r -n 'ignore: ' lib; then exit 1; else exit 0; fi
 	@echo $(SEPARATOR)
 
 .PHONY: todo
 todo:
 	@echo "Files that include TODO items to be resolved:\n"
-	@-if grep -r -n ' TODO ' lib; then exit 1; else exit 0; fi
+	@-if grep -r -n ' TODO ' lib; then echo; exit 1; else exit 0; fi
 	@echo $(SEPARATOR)
 
 .PHONY: license
 license:
 	@echo "Files without a LICENSE:\n"
-	@-find lib -type f -not -name '*~' ! -exec grep -qE '^(/// .*|/// Copyright|/// Licensed)' {} \; -print | xargs printf "\t%s\n"
+	@-find lib -type f -not -name '*~' -not -name 'README*' \
+	! -exec grep -qE '^(/// Copyright|/// Licensed)' {} \; -print | xargs printf "\t%s\n"
 	@echo $(SEPARATOR)
 
 .PHONY: riverpod
@@ -228,7 +256,7 @@ desktops:
 .PHONY: test
 test:
 	@echo "Unit TEST:"
-	-flutter test test
+	@-if [ -d test ]; then flutter test test; else echo "\nNo test folder found."; fi
 	@echo $(SEPARATOR)
 
 # For a specific interactive test we think of it as providing a
@@ -371,13 +399,13 @@ publish:
 .PHONY: import_order
 import_order:
 	@echo "Dart: CHECK IMPORT ORDER"
-	dart run custom_lint
+	import_order --check
 	@echo $(SEPARATOR)
 
 .PHONY: import_order_fix
 import_order_fix:
 	@echo "Dart: FIX IMPORT ORDER"
-	fix_imports --project-name=$(APP) -r lib
+	import_order
 	@echo $(SEPARATOR)
 
 ### TODO THESE SHOULD BE CHECKED AND CLEANED UP
@@ -392,11 +420,12 @@ versions:
 	perl -pi -e 's|applicationVersion = ".*";|applicationVersion = "$(VER)";|' \
 	lib/constants/app.dart
 
-.PHONY: wc
-wc: lib/*.dart
+.PHONY: loc
+loc: lib/*.dart
 	@cat $(shell find lib -name '*.dart') \
 	| egrep -v '^ */' \
 	| egrep -v '^ *$$' \
+	| egrep -v '^ *[)},]+, *$$' \
 	| wc -l
 
 #
