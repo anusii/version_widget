@@ -38,7 +38,7 @@ Add the package to you app's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  version_widget: ^1.0.0
+  version_widget: ^1.0.5
 ```
 
 ## Usage
@@ -51,7 +51,7 @@ import 'package:version_widget/version_widget.dart';
 // In your widget tree:
 
 VersionWidget(
-  version: '1.0.0',  // Required parameter
+  version: '1.0.5',  // Required parameter
 )
 ```
 
@@ -59,7 +59,7 @@ With CHANGELOG support:
 
 ```dart
 VersionWidget(
-  version: '1.0.0',
+  version: '1.0.5',
   changelogUrl: 'https://raw.githubusercontent.com/yourusername/yourrepo/dev/CHANGELOG.md',
   showDate: true,
   defaultDate: '20240101',
@@ -73,7 +73,7 @@ With custom tooltip messages:
 
 ```dart
 VersionWidget(
-  version: '1.0.0',  // Required parameter
+  version: '1.0.5',  // Required parameter
   changelogUrl: 'https://github.com/yourusername/yourrepo/raw/main/CHANGELOG.md',
   isLatestTooltip: 'Your app is up to date! Enjoy the latest features.',
   notLatestTooltip: 'Version $_latestVersion is available with new features!',
@@ -90,13 +90,13 @@ VersionWidget(
 ## CHANGELOG.md Format
 
 The widget expects the CHANGELOG.md file to have dates in the
-following format. The important part is `[1.0.0 20250101` and the
+following format. The important part is `[1.0.5 20250101` and the
 first such text found is interpreted as the latest version and
-timestamp. This allows, for example, the string to be `[1.0.0 20250514
+timestamp. This allows, for example, the string to be `[1.0.5 20250514
 fred]` as a common format to attribute changes to users.
 
 ```markdown
-## [1.0.0 20250101]
+## [1.0.5 20250101]
 - Initial release
 ```
 
