@@ -16,11 +16,7 @@ dependencies:
   url_launcher: ^6.1.14
 
 dev_dependencies:
-  example:
-    path: example
   flutter_lints: ^2.0.0
-  flutter_test:
-    sdk: flutter
 
 flutter:
   uses-material-design: true

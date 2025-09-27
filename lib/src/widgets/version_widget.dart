@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Sunday 2025-09-28 05:43:55 +1000 Graham Williams>
+// Time-stamp: <Sunday 2025-09-28 05:48:17 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -281,7 +281,7 @@ class _VersionWidgetState extends State<VersionWidget> {
     final tooltipMessage = '''
 
     **Version:** $_currentVersion. According to the CHANGELOG from the app
-    repository ${_isLatest ? widget.isLatestTooltip ?? defaultLatestTooltip : widget.notLatestTooltip ?? defaultNotLatestTooltip}**Tap** on the
+    repository ${_isLatest ? widget.isLatestTooltip ?? defaultLatestTooltip : widget.notLatestTooltip ?? defaultNotLatestTooltip} **Tap** on the
     **Version** string to visit the app's CHANGELOG file in your browser.
 
     ''';

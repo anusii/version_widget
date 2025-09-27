@@ -1,6 +1,6 @@
 /// Version widget for apps.
 ///
-// Time-stamp: <Saturday 2025-09-27 15:55:00 +1000 Graham Williams>
+// Time-stamp: <Sunday 2025-09-28 05:45:55 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -28,4 +28,4 @@
 
 library;
 
-export 'src/widgets/version_widget.dart.~2~' show VersionWidget;
+export 'src/widgets/version_widget.dart' show VersionWidget;

@@ -1,4 +1,4 @@
-#  Demonstration of VersionWidget()
+# Demonstration of VersionWidget()
 
 The VersionWidget() is demonstrated comparing version number against a
 number of github repositories, and reporting if the version number
@@ -7,6 +7,6 @@ CHANGELOG or is out of date.
 
 Simply build and run the example app:
 
-```
+```shell
 flutter run
 ```
