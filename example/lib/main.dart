@@ -51,11 +51,12 @@ class MyHomePage extends StatelessWidget {
                         'Specify the current version.\n'
                         'The date is from the CHANGELOG.\n'
                         'Expect blue version and correct date.\n'
+                        'Font size is default\n'
                         'Tap the string to see the CHANGELOG.',
                       ),
                       SizedBox(height: 8),
                       VersionWidget(
-                        version: '1.0.3',
+                        version: '1.0.5',
                         changelogUrl:
                             'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
                       ),
@@ -75,11 +76,12 @@ class MyHomePage extends StatelessWidget {
                         'Specify an old version.\n'
                         'The date is from the CHANGELOG.\n'
                         'Expect red version and correct date.\n'
+                        'Font size is 18.0\n'
                         'Tap the string to see the CHANGELOG.',
                       ),
                       SizedBox(height: 8),
                       VersionWidget(
-                        version: '1.0.1',
+                        version: '1.0.2',
                         changelogUrl:
                             'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
                         fontSize: 18.0,
@@ -99,17 +101,18 @@ class MyHomePage extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        'github.com/gjwgit/rattleng\n'
+                        'github.com/gjwgit/rattle\n'
                         'Specifying an old version.\n'
                         'The date here is from the CHANGELOG.\n'
                         'Expect bold red version and correct date.\n'
+                        'Font size is 14.0\n'
                         'Tap the string to see the CHANGELOG.',
                       ),
                       SizedBox(height: 8),
                       VersionWidget(
-                        version: '6.2.1',
+                        version: '6.5.15',
                         changelogUrl:
-                            'https://raw.githubusercontent.com/gjwgit/rattleng/refs/heads/dev/CHANGELOG.md',
+                            'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
                         showDate: true,
                         fontSize: 14.0,
                       ),
@@ -127,17 +130,18 @@ class MyHomePage extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        'github.com/gjwgit/rattleng\n'
+                        'github.com/gjwgit/rattle\n'
                         'Old version in CHANGELOG without date.\n'
                         'We should thus not see a date here.\n'
                         'Expect bold red version and no date.\n'
+                        'Font size is 12.0\n'
                         'Tap the string to see the CHANGELOG.',
                       ),
                       SizedBox(height: 8),
                       VersionWidget(
                         version: '6.1.14',
                         changelogUrl:
-                            'https://raw.githubusercontent.com/gjwgit/rattleng/refs/heads/dev/CHANGELOG.md',
+                            'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
                         showDate: true,
                         fontSize: 12.0,
                       ),
@@ -156,17 +160,18 @@ class MyHomePage extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        'github.com/gjwgit/rattleng\n'
+                        'github.com/gjwgit/rattle\n'
                         'Future version not in the CHANGELOG.\n'
                         'We should thus not see a date here.\n'
                         'Expect blue version and no date.\n'
+                        'Font size is 10.0\n'
                         'Tap the string to see the CHANGELOG.',
                       ),
                       SizedBox(height: 8),
                       VersionWidget(
                         version: '7.0.0',
                         changelogUrl:
-                            'https://raw.githubusercontent.com/gjwgit/rattleng/refs/heads/dev/CHANGELOG.md',
+                            'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
                         showDate: true,
                         fontSize: 10.0,
                       ),
@@ -184,17 +189,18 @@ class MyHomePage extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        'RattleNG @ github.com/gjwgit/rattleng\n'
+                        'github.com/gjwgit/rattle\n'
                         'Old version not in the CHANGELOG.\n'
                         'We should thus not see a date here.\n'
                         'Expect bold red version and no date.\n'
+                        'Font size is 8.0\n'
                         'Tap the string to see the CHANGELOG.',
                       ),
                       SizedBox(height: 8),
                       VersionWidget(
                         version: '5.0.0',
                         changelogUrl:
-                            'https://raw.githubusercontent.com/gjwgit/rattleng/refs/heads/dev/CHANGELOG.md',
+                            'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
                         showDate: true,
                         fontSize: 8.0,
                       ),

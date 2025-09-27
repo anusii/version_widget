@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Saturday 2025-09-27 15:54:16 +1000 Graham Williams>
+// Time-stamp: <Sunday 2025-09-28 05:43:55 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -272,21 +272,17 @@ class _VersionWidgetState extends State<VersionWidget> {
             ? 'Version $_currentVersion - ${_formatDate(_currentDate)}'
             : 'Version $_currentVersion';
 
-    const defaultLatestTooltip = '''
+    const defaultLatestTooltip = 'this is the latest version available.';
 
-    this is the latest version available.
-    ''';
-
-    final defaultNotLatestTooltip = '''
-
-    there is a new version $_latestVersion available. You should consider
-    updating to the latest version.  ''';
+    final defaultNotLatestTooltip = 'there is a new version available '
+        '$_latestVersion. You should consider '
+        'updating to the latest version.';
 
     final tooltipMessage = '''
 
-    **Version $_currentVersion:** According to the CHANGELOG from the app
-      repository ${_isLatest ? widget.isLatestTooltip ?? defaultLatestTooltip : widget.notLatestTooltip ?? defaultNotLatestTooltip}**Tap** on the
-      **Version** string to visit the app's CHANGELOG file in your browser.
+    **Version:** $_currentVersion. According to the CHANGELOG from the app
+    repository ${_isLatest ? widget.isLatestTooltip ?? defaultLatestTooltip : widget.notLatestTooltip ?? defaultNotLatestTooltip}**Tap** on the
+    **Version** string to visit the app's CHANGELOG file in your browser.
 
     ''';
 
