@@ -9,6 +9,7 @@ utilised by the flutter version_widget package.
 
 ## 1.1 Review and Consolidate
 
+- Better CHANGELOG. Rosolve CORS issue [1.0.6 20251027 tonypioneer]
 - Update tooltip text [1.0.5 20250928 gjw]
 - Support user text style for Version string [1.0.4 20250722 jesscmoore]
 - Support VersionWidget fontSize [1.0.3 20250717 gjw]
