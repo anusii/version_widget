@@ -372,14 +372,15 @@ class _VersionWidgetState extends State<VersionWidget> {
 
       if (kIsWeb && url != widget.changelogUrl) {
         debugPrint(
-            'Web platform detected: Converting URL from ${widget.changelogUrl} to $url');
+            'Web platform detected: Converting URL from ${widget.changelogUrl} '
+            'to $url');
       }
 
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode != 200) {
-        throw Exception(
-            'Failed to load changelog: HTTP ${response.statusCode}');
+        throw Exception('Failed to load changelog: '
+            'HTTP ${response.statusCode}');
       }
 
       final content = response.body;
