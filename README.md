@@ -22,8 +22,8 @@ access.
 - Display version information in a simple text widget
 - Optionally also display the release date
 - Automatic date extraction from CHANGELOG.md files
-- Clickable link to view the full CHANGELOG
-- Customizable styling
+- Clickable to view the full CHANGELOG in an in-app dialogue with markdown rendering
+- Customisable styling
 - Fallback date support
 - Custom tooltip messages
 - Visual indicator for outdated version
@@ -58,14 +58,11 @@ With CHANGELOG support:
 ```dart
 VersionWidget(
   version: '1.0.5',
-  changelogUrl: 'https://raw.githubusercontent.com/anusii/version_wdiget/main/CHANGELOG.md',
+  changelogUrl: 'https://raw.githubusercontent.com/anusii/version_widget/main/CHANGELOG.md',
   showDate: true,
   defaultDate: '20240101',
 )
 ```
-
-Note that you should specify the raw domain which may avoid a missing
-CORS header issue from github.
 
 With custom tooltip messages:
 

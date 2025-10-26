@@ -26,8 +26,10 @@
 ///
 /// Authors: Kevin Wang.
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart' as http;
 import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -155,6 +157,10 @@ class _VersionWidgetState extends State<VersionWidget> {
   bool _isChecking = true;
   bool _hasInternet = true;
 
+  /// The full CHANGELOG content for display in the dialogue.
+
+  String _changelogContent = '';
+
   @override
   void initState() {
     super.initState();
@@ -164,6 +170,23 @@ class _VersionWidgetState extends State<VersionWidget> {
     } else {
       _isChecking = false;
     }
+  }
+
+  /// Converts GitHub blob URLs to raw content URLs.
+  /// This is necessary for CORS compatibility in web environments.
+  ///
+  /// Converts:
+  /// - https://github.com/user/repo/blob/branch/file.md
+  /// to:
+  /// - https://raw.githubusercontent.com/user/repo/branch/file.md
+
+  String _convertToRawUrl(String url) {
+    if (url.contains('github.com') && url.contains('/blob/')) {
+      return url
+          .replaceFirst('github.com', 'raw.githubusercontent.com')
+          .replaceFirst('/blob/', '/');
+    }
+    return url;
   }
 
   String _formatDate(String dateStr) {
@@ -197,11 +220,139 @@ class _VersionWidgetState extends State<VersionWidget> {
     }
   }
 
+  /// Displays the CHANGELOG content in a dialogue with markdown rendering.
+  /// This method is called when the user taps on the version text.
+
+  void _showChangelogDialog(BuildContext context) {
+    if (_changelogContent.isEmpty) {
+      // Show a message if CHANGELOG content is not available.
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Changelog'),
+            content: const Text('Changelog content is not available.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: 800,
+              maxHeight: MediaQuery.of(context).size.height * 0.8,
+            ),
+            child: Column(
+              children: [
+                // Title bar with close button.
+
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(4),
+                      topRight: Radius.circular(4),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Changelog',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.of(context).pop(),
+                        tooltip: 'Close',
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Markdown content.
+
+                Expanded(
+                  child: Markdown(
+                    data: _changelogContent,
+                    selectable: true,
+                    onTapLink: (text, href, title) async {
+                      if (href != null) {
+                        final Uri url = Uri.parse(href);
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        }
+                      }
+                    },
+                  ),
+                ),
+
+                // Bottom action bar.
+
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    border: Border(
+                      top: BorderSide(
+                        color: Theme.of(context).dividerColor,
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (widget.changelogUrl != null)
+                        TextButton.icon(
+                          icon: const Icon(Icons.open_in_new),
+                          label: const Text('View on GitHub'),
+                          onPressed: () async {
+                            final Uri url = Uri.parse(widget.changelogUrl!);
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            }
+                          },
+                        ),
+                      const SizedBox(width: 8),
+                      FilledButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Close'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   /// Fetches and parses the changelog file to extract version and date information.
   /// The method handles several scenarios:
   /// 1. No changelog URL provided: Uses default values
   /// 2. Changelog fetch successful: Extracts version and date
   /// 3. Changelog fetch failed: Falls back to default values
+  ///
+  /// For web environments, this method automatically converts GitHub blob URLs
+  /// to raw.githubusercontent.com URLs to avoid CORS issues.
 
   Future<void> _fetchChangelog() async {
     if (widget.changelogUrl == null) {
@@ -215,18 +366,40 @@ class _VersionWidgetState extends State<VersionWidget> {
     }
 
     try {
-      final response = await http.get(Uri.parse(widget.changelogUrl!));
+      // Convert GitHub blob URLs to raw URLs for CORS compatibility.
+
+      final url = _convertToRawUrl(widget.changelogUrl!);
+
+      if (kIsWeb && url != widget.changelogUrl) {
+        debugPrint(
+            'Web platform detected: Converting URL from ${widget.changelogUrl} to $url');
+      }
+
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode != 200) {
+        throw Exception(
+            'Failed to load changelog: HTTP ${response.statusCode}');
+      }
+
       final content = response.body;
 
-      // Extract all version and date pairs from CHANGELOG.md
+      // Store the full CHANGELOG content for display in dialogue.
+
+      _changelogContent = content;
+
+      // Extract all version and date pairs from CHANGELOG.md.
+
       final matches = RegExp(r'\[([\d.]+) (\d{8})').allMatches(content);
 
       if (matches.isNotEmpty) {
-        // First match is the latest version
+        // First match is the latest version.
+
         final latestMatch = matches.first;
         _latestVersion = latestMatch.group(1)!;
 
-        // Find the date for the current version
+        // Find the date for the current version.
+
         String? currentVersionDate;
         for (final match in matches) {
           if (match.group(1) == _currentVersion) {
@@ -253,7 +426,15 @@ class _VersionWidgetState extends State<VersionWidget> {
         });
       }
     } catch (e) {
-      debugPrint('Error fetching changelog: $e');
+      if (kIsWeb) {
+        debugPrint('Error fetching changelog on web platform: $e');
+        debugPrint('Make sure the CHANGELOG URL uses '
+            'raw.githubusercontent.com for GitHub files');
+        debugPrint('Original URL: ${widget.changelogUrl}');
+        debugPrint('Converted URL: ${_convertToRawUrl(widget.changelogUrl!)}');
+      } else {
+        debugPrint('Error fetching changelog: $e');
+      }
       setState(() {
         _currentDate = '';
         _latestVersion = _currentVersion;
@@ -282,27 +463,20 @@ class _VersionWidgetState extends State<VersionWidget> {
 
     **Version:** $_currentVersion. According to the CHANGELOG from the app
     repository ${_isLatest ? widget.isLatestTooltip ?? defaultLatestTooltip : widget.notLatestTooltip ?? defaultNotLatestTooltip} **Tap** on the
-    **Version** string to visit the app's CHANGELOG file in your browser.
+    **Version** string to view the app's CHANGELOG.
 
     ''';
 
-    return MarkdownTooltip(
-      message: tooltipMessage,
-      child: GestureDetector(
-        onTap: widget.changelogUrl == null
-            ? null
-            : () async {
-                final Uri url = Uri.parse(widget.changelogUrl!);
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url);
-                } else {
-                  debugPrint('Could not launch ${widget.changelogUrl}');
-                }
-              },
-        child: MouseRegion(
-          cursor: widget.changelogUrl == null
-              ? SystemMouseCursors.basic
-              : SystemMouseCursors.click,
+    return GestureDetector(
+      onTap: widget.changelogUrl == null
+          ? null
+          : () => _showChangelogDialog(context),
+      child: MouseRegion(
+        cursor: widget.changelogUrl == null
+            ? SystemMouseCursors.basic
+            : SystemMouseCursors.click,
+        child: MarkdownTooltip(
+          message: tooltipMessage,
           child: Text(
             displayText,
             style: (widget.userTextStyle != null)
