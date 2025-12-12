@@ -485,7 +485,10 @@ class _VersionWidgetState extends State<VersionWidget> {
                 : TextStyle(
                     color: _isChecking
                         ? Colors.grey
-                        : (_isLatest ? Colors.blue : Colors.red),
+                        : (_isLatest
+                            // Match app bar title color if verion=latest
+                            ? Theme.of(context).textTheme.titleLarge!.color
+                            : Colors.red),
                     fontSize: widget.fontSize,
                     fontWeight: _isChecking
                         ? FontWeight.normal
