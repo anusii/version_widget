@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Sunday 2025-09-28 05:48:17 +1000 Graham Williams>
+// Time-stamp: <Monday 2026-02-23 10:49:49 +1100 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -176,9 +176,9 @@ class _VersionWidgetState extends State<VersionWidget> {
   /// This is necessary for CORS compatibility in web environments.
   ///
   /// Converts:
-  /// - https://github.com/user/repo/blob/branch/file.md
+  /// - https://github.com/gjwgit/geopod/blob/dev/CHANGELOG.md
   /// to:
-  /// - https://raw.githubusercontent.com/user/repo/branch/file.md
+  /// - https://raw.githubusercontent.com/gjwgit/geopod/dev/CHANGELOG.md
 
   String _convertToRawUrl(String url) {
     if (url.contains('github.com') && url.contains('/blob/')) {
