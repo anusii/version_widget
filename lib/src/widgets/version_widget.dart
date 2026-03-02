@@ -356,12 +356,14 @@ class _VersionWidgetState extends State<VersionWidget> {
 
   Future<void> _fetchChangelog() async {
     if (widget.changelogUrl == null) {
-      setState(() {
-        _currentDate = '';
-        _latestVersion = _currentVersion;
-        _isLatest = true;
-        _isChecking = false;
-      });
+      if (mounted) {
+        setState(() {
+          _currentDate = '';
+          _latestVersion = _currentVersion;
+          _isLatest = true;
+          _isChecking = false;
+        });
+      }
       return;
     }
 
@@ -409,22 +411,26 @@ class _VersionWidgetState extends State<VersionWidget> {
           }
         }
 
-        setState(() {
-          // Don't use default date if version not found.
+        if (mounted) {
+          setState(() {
+            // Don't use default date if version not found.
 
-          _currentDate = currentVersionDate ?? '';
-          _isLatest = compareVersions(_currentVersion, _latestVersion) >= 0;
-          _isChecking = false;
-          _hasInternet = true;
-        });
+            _currentDate = currentVersionDate ?? '';
+            _isLatest = compareVersions(_currentVersion, _latestVersion) >= 0;
+            _isChecking = false;
+            _hasInternet = true;
+          });
+        }
       } else {
-        setState(() {
-          _currentDate = '';
-          _latestVersion = _currentVersion;
-          _isLatest = true;
-          _isChecking = false;
-          _hasInternet = true;
-        });
+        if (mounted) {
+          setState(() {
+            _currentDate = '';
+            _latestVersion = _currentVersion;
+            _isLatest = true;
+            _isChecking = false;
+            _hasInternet = true;
+          });
+        }
       }
     } catch (e) {
       if (kIsWeb) {
@@ -436,13 +442,15 @@ class _VersionWidgetState extends State<VersionWidget> {
       } else {
         debugPrint('Error fetching changelog: $e');
       }
-      setState(() {
-        _currentDate = '';
-        _latestVersion = _currentVersion;
-        _isLatest = true;
-        _isChecking = false;
-        _hasInternet = false;
-      });
+      if (mounted) {
+        setState(() {
+          _currentDate = '';
+          _latestVersion = _currentVersion;
+          _isLatest = true;
+          _isChecking = false;
+          _hasInternet = false;
+        });
+      }
     }
   }
 
