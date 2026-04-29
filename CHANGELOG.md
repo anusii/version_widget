@@ -9,6 +9,7 @@ utilised by the flutter version_widget package.
 
 ## 1.1 Review and Consolidate
 
++ Better tooltip formatting [1.0.8 20260429 gjw]
 + Tooltip headline rather than paragraph [1.0.7 20260429 gjw]
 + Better CHANGELOG. Rosolve CORS issue [1.0.6 20251027 tonypioneer]
 + Update tooltip text [1.0.5 20250928 gjw]
