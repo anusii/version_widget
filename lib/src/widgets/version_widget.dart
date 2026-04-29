@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Wednesday 2026-04-29 12:32:21 +1000 Graham Williams>
+// Time-stamp: <Wednesday 2026-04-29 12:34:08 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
 ///
@@ -462,9 +462,9 @@ class _VersionWidgetState extends State<VersionWidget> {
 
     final tooltipMessage = '''
 
-    **Version**
+    **Version** $_currentVersion
 
-    $_currentVersion. According to the CHANGELOG from the app
+    According to the CHANGELOG from the app
     repository ${_isLatest ? widget.isLatestTooltip ?? defaultLatestTooltip : widget.notLatestTooltip ?? defaultNotLatestTooltip} **Tap** on the
     **Version** string to view the app's CHANGELOG.
 
