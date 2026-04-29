@@ -96,11 +96,6 @@ while [[ "$1" != "" ]]; do
     esac
 done
 
-if [ ! -f "$FILE" ]; then
-    echo "Error: File '$FILE' does not exist."
-    exit 1
-fi
-
 # Filter FILES array
 
 declare -a FILTERED_FILES
