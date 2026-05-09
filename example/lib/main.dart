@@ -111,9 +111,11 @@ class MyHomePage extends StatelessWidget {
                         'github.com/anusii/version_widget.git\n'
                         'Specify an old version.\n'
                         'The date is from the CHANGELOG.\n'
-                        'Expect red version and correct date.\n'
+                        'Expect red version, correct date and an\n'
+                        'inline Update button to the right.\n'
                         'Font size is 18.0\n'
-                        'Tap the string to see the CHANGELOG.',
+                        'Tap the string to see the CHANGELOG.\n'
+                        'Tap the Update button to launch the download URL.',
                       ),
                       SizedBox(height: 8),
                       VersionWidget(
@@ -121,6 +123,9 @@ class MyHomePage extends StatelessWidget {
                         changelogUrl:
                             'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
                         fontSize: 18.0,
+                        showUpdateButton: true,
+                        downloadUrl:
+                            'https://github.com/anusii/version_widget/releases/latest',
                       ),
                     ],
                   ),
@@ -140,7 +145,8 @@ class MyHomePage extends StatelessWidget {
                         'github.com/gjwgit/rattle\n'
                         'Specifying an old version.\n'
                         'The date here is from the CHANGELOG.\n'
-                        'Expect bold red version and correct date.\n'
+                        'Update button is visible with a custom label\n'
+                        'and a Rattle download URL.\n'
                         'Font size is 14.0\n'
                         'Tap the string to see the CHANGELOG.',
                       ),
@@ -151,6 +157,10 @@ class MyHomePage extends StatelessWidget {
                             'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
                         showDate: true,
                         fontSize: 14.0,
+                        showUpdateButton: true,
+                        downloadUrl:
+                            'https://github.com/gjwgit/rattle/releases/latest',
+                        updateButtonLabel: 'Get latest',
                       ),
                     ],
                   ),
@@ -239,6 +249,37 @@ class MyHomePage extends StatelessWidget {
                             'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
                         showDate: true,
                         fontSize: 8.0,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Demonstrates hiding the version label entirely while still
+              // surfacing the discover-and-download button when an outdated
+              // version is detected. Only the Update button should appear.
+              Card(
+                margin: EdgeInsets.all(8),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'github.com/anusii/version_widget.git\n'
+                        'showVersion=false, showUpdateButton=true.\n'
+                        'Version label is hidden but the Update\n'
+                        'button is still rendered when a newer\n'
+                        'release is detected in the CHANGELOG.',
+                      ),
+                      SizedBox(height: 8),
+                      VersionWidget(
+                        version: '1.0.0',
+                        changelogUrl:
+                            'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
+                        showVersion: false,
+                        showUpdateButton: true,
+                        downloadUrl:
+                            'https://github.com/anusii/version_widget/releases/latest',
                       ),
                     ],
                   ),

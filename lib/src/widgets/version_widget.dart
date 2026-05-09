@@ -1,8 +1,8 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Wednesday 2026-04-29 13:35:55 +1000 Graham Williams>
+// Time-stamp: <Saturday 2026-05-09 17:30:00 +1000 Tony Chen>
 ///
-/// Copyright (C) 2024-2025, Software Innovation Institute, ANU.
+/// Copyright (C) 2024-2026, Software Innovation Institute, ANU.
 ///
 /// Licensed under the MIT License (the "License").
 ///
@@ -24,7 +24,7 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <https://choosealicense.com/licenses/mit/>.
 ///
-/// Authors: Kevin Wang.
+/// Authors: Kevin Wang, Tony Chen.
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -50,17 +50,25 @@ import 'package:version_widget/src/utils/compare_versions.dart';
 ///
 /// Styling of the version string is offered in two modes:
 ///
-/// 1. Automatic mode: version styled with colour denoting package statu
-///    (blue: up to date, red: newer version availbale, grey: version
+/// 1. Automatic mode: version styled with colour denoting package status
+///    (blue: up to date, red: newer version available, grey: version
 ///     being checked).
 /// 2. Manual mode: user specified TextStyle().
+///
+/// When a newer version is detected and [showUpdateButton] is enabled, an
+/// inline action button is rendered to the right of the version text. Tapping
+/// the button launches [downloadUrl] in the default external handler so the
+/// user can fetch the latest installer or release page.
 ///
 /// Example usage:
 /// ```dart
 /// VersionWidget(
+///   version: '1.0.5',
 ///   changelogUrl: 'https://github.com/anusii/version_widget/raw/main/CHANGELOG.md',
 ///   showDate: true,
 ///   defaultDate: '20240101',
+///   showUpdateButton: true,
+///   downloadUrl: 'https://example.com/downloads/myapp-latest.exe',
 /// )
 /// ```
 class VersionWidget extends StatefulWidget {
@@ -74,6 +82,14 @@ class VersionWidget extends StatefulWidget {
   /// The changelog should follow the format: [x.x.x YYYYMMDD] for version entries.
 
   final String? changelogUrl;
+
+  /// Whether to show the version number text.
+  /// Defaults to true.
+  /// When false, the version text is hidden but version checking still occurs
+  /// so that the optional update button can still appear when a newer version
+  /// is detected.
+
+  final bool showVersion;
 
   /// Whether to show the release date alongside the version.
   /// Defaults to true.
@@ -106,6 +122,30 @@ class VersionWidget extends StatefulWidget {
 
   final TextStyle? userTextStyle;
 
+  /// Whether to show the discover-and-download button when a newer version is
+  /// detected.
+  /// Defaults to false (hidden).
+  /// The button is only rendered when all of the following are true:
+  /// 1. [showUpdateButton] is true
+  /// 2. A newer version has been detected from the CHANGELOG
+  /// 3. [downloadUrl] is non-null and non-empty
+  /// Tapping the button launches [downloadUrl] using the platform's default
+  /// external handler (typically the system browser) so the user can fetch
+  /// the latest release.
+
+  final bool showUpdateButton;
+
+  /// The URL to launch when the user taps the discover-and-download button.
+  /// Typically points at an installer (.exe, .apk, .dmg) or a release page.
+  /// Required for the update button to be rendered.
+
+  final String? downloadUrl;
+
+  /// Optional label shown next to the download icon on the update button.
+  /// Defaults to 'Update' when null.
+
+  final String? updateButtonLabel;
+
   /// Creates a new [VersionWidget].
   /// The [version] parameter is required and should be the current version of the app.
   /// All other parameters are optional.
@@ -114,12 +154,16 @@ class VersionWidget extends StatefulWidget {
     super.key,
     required this.version,
     this.changelogUrl,
+    this.showVersion = true,
     this.showDate = true,
     this.defaultDate = '20260101',
     this.isLatestTooltip,
     this.notLatestTooltip,
     this.fontSize = 16.0,
     this.userTextStyle,
+    this.showUpdateButton = false,
+    this.downloadUrl,
+    this.updateButtonLabel,
   });
 
   @override
@@ -135,7 +179,7 @@ class VersionWidget extends StatefulWidget {
 
 class _VersionWidgetState extends State<VersionWidget> {
   /// Indicates whether the current version is the latest version.
-  /// Used to determine the color of the version text (blue for latest, red for outdated).
+  /// Used to determine the colour of the version text (blue for latest, red for outdated).
 
   bool _isLatest = true;
 
@@ -165,7 +209,12 @@ class _VersionWidgetState extends State<VersionWidget> {
   void initState() {
     super.initState();
     _currentVersion = widget.version;
-    if (widget.showDate) {
+
+    // We still want to check the changelog whenever the changelog URL is
+    // provided so that the update button can be surfaced even when the
+    // version date is intentionally hidden by the host app.
+
+    if (widget.showDate || widget.changelogUrl != null) {
       _fetchChangelog();
     } else {
       _isChecking = false;
@@ -446,6 +495,88 @@ class _VersionWidgetState extends State<VersionWidget> {
     }
   }
 
+  /// Launches the configured [VersionWidget.downloadUrl] in the default
+  /// external handler so the user can fetch the new release.
+
+  Future<void> _launchDownload() async {
+    final downloadUrl = widget.downloadUrl;
+    if (downloadUrl == null || downloadUrl.isEmpty) return;
+
+    final uri = Uri.parse(downloadUrl);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint('Unable to launch download URL: $downloadUrl');
+    }
+  }
+
+  /// Builds the inline discover-and-download action button surfaced when a
+  /// newer release is detected. Returns null when the button should not be
+  /// rendered for the current state.
+
+  Widget? _buildUpdateButton(BuildContext context) {
+    final downloadUrl = widget.downloadUrl;
+    if (!widget.showUpdateButton) return null;
+    if (_isChecking) return null;
+    if (_isLatest) return null;
+    if (downloadUrl == null || downloadUrl.isEmpty) return null;
+
+    final label = widget.updateButtonLabel ?? 'Update';
+    final tooltipMessage = '''
+
+    **New version $_latestVersion available**
+
+    Tap to download and install the latest release. The download URL
+    will open in the default external handler (typically your system
+    browser or the relevant platform installer).
+
+    ''';
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0),
+      child: MarkdownTooltip(
+        message: tooltipMessage,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: _launchDownload,
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: 0.12),
+                border: Border.all(color: Colors.red, width: 1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.system_update_alt,
+                    size: 16,
+                    color: Colors.red,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final displayText = _isChecking
@@ -470,7 +601,7 @@ class _VersionWidgetState extends State<VersionWidget> {
 
     ''';
 
-    return GestureDetector(
+    final versionLabel = GestureDetector(
       onTap: widget.changelogUrl == null
           ? null
           : () => _showChangelogDialog(context),
@@ -496,6 +627,24 @@ class _VersionWidgetState extends State<VersionWidget> {
           ),
         ),
       ),
+    );
+
+    final updateButton = _buildUpdateButton(context);
+
+    // Short-circuit when neither the version label nor the update button is
+    // visible to keep the widget completely transparent in the host layout.
+
+    if (!widget.showVersion && updateButton == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        if (widget.showVersion) versionLabel,
+        if (updateButton != null) updateButton,
+      ],
     );
   }
 }
