@@ -1,8 +1,8 @@
 /// A demonstration of the VersionWidget app.
 ///
-// Time-stamp: <Sunday 2025-09-28 05:56:57 +1000 Graham Williams>
+// Time-stamp: <Saturday 2026-05-09 18:20:00 +1000 Tony Chen>
 ///
-/// Copyright (C) 2025, Software Innovation Institute ANU
+/// Copyright (C) 2025-2026, Software Innovation Institute ANU
 ///
 /// Licensed under the MIT License (the "License").
 ///
@@ -26,7 +26,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 ///
-/// Authors: Kevin Wang, Graham Williams
+/// Authors: Kevin Wang, Graham Williams, Tony Chen
 
 // Add the library directive as we have doc entries above. We publish the above
 // meta doc lines in the docs.
@@ -64,230 +64,244 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(title),
       ),
-      body: const Row(
-        children: [
-          Column(
-            children: <Widget>[
-              // Example 1: Up-to-date version (blue)
-              Card(
-                margin: EdgeInsets.all(8),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Text(
-                        'github.com/anusii/version_widget.git\n'
-                        'Specify the current version.\n'
-                        'The date is from the CHANGELOG.\n'
-                        'Expect blue version and correct date.\n'
-                        'Font size is default\n'
-                        'Tap the string to see the CHANGELOG.',
+      body: const SingleChildScrollView(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  // Example 1: Up-to-date version (blue).
+                  Card(
+                    margin: EdgeInsets.all(8),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Text(
+                            'github.com/anusii/version_widget.git\n'
+                            'Specify the current version.\n'
+                            'The date is from the CHANGELOG.\n'
+                            'Expect blue version and correct date.\n'
+                            'Font size is default\n'
+                            'Tap the string to see the CHANGELOG.',
+                          ),
+                          SizedBox(height: 8),
+                          VersionWidget(
+                            version: '1.0.5',
+                            changelogUrl:
+                                'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      VersionWidget(
-                        version: '1.0.5',
-                        changelogUrl:
-                            'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
 
-              Card(
-                margin: EdgeInsets.all(8),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Text(
-                        'github.com/anusii/version_widget.git\n'
-                        'Specify an old version.\n'
-                        'The date is from the CHANGELOG.\n'
-                        'Expect red version, correct date and an\n'
-                        'inline Update button to the right.\n'
-                        'Font size is 18.0\n'
-                        'Tap the string to see the CHANGELOG.\n'
-                        'Tap the Update button to launch the download URL.',
+                  // Example 2: Outdated version with the discover-and-download
+                  // button enabled. The default Update label is used so all
+                  // demo buttons read the same.
+                  Card(
+                    margin: EdgeInsets.all(8),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Text(
+                            'github.com/anusii/version_widget.git\n'
+                            'Specify an old version.\n'
+                            'The date is from the CHANGELOG.\n'
+                            'Expect red version, correct date and an\n'
+                            'inline Update button to the right.\n'
+                            'Font size is 18.0\n'
+                            'Tap the string to see the CHANGELOG.\n'
+                            'Tap the Update button to launch the URL.',
+                          ),
+                          SizedBox(height: 8),
+                          VersionWidget(
+                            version: '1.0.2',
+                            changelogUrl:
+                                'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
+                            fontSize: 18.0,
+                            showUpdateButton: true,
+                            downloadUrl:
+                                'https://github.com/anusii/version_widget/releases/latest',
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      VersionWidget(
-                        version: '1.0.2',
-                        changelogUrl:
-                            'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
-                        fontSize: 18.0,
-                        showUpdateButton: true,
-                        downloadUrl:
-                            'https://github.com/anusii/version_widget/releases/latest',
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              Card(
-                margin: EdgeInsets.all(8),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Text(
-                        'github.com/gjwgit/rattle\n'
-                        'Specifying an old version.\n'
-                        'The date here is from the CHANGELOG.\n'
-                        'Update button is visible with a custom label\n'
-                        'and a Rattle download URL.\n'
-                        'Font size is 14.0\n'
-                        'Tap the string to see the CHANGELOG.',
+            ),
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  // Example 3: Outdated Rattle version with the
+                  // discover-and-download button enabled. Uses the default
+                  // Update label for consistency with Example 2.
+                  Card(
+                    margin: EdgeInsets.all(8),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Text(
+                            'github.com/gjwgit/rattle\n'
+                            'Specifying an old version.\n'
+                            'The date here is from the CHANGELOG.\n'
+                            'Expect bold red version, correct date and\n'
+                            'the Update button targeting the Rattle\n'
+                            'releases page.\n'
+                            'Font size is 14.0\n'
+                            'Tap the string to see the CHANGELOG.',
+                          ),
+                          SizedBox(height: 8),
+                          VersionWidget(
+                            version: '6.5.15',
+                            changelogUrl:
+                                'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
+                            showDate: true,
+                            fontSize: 14.0,
+                            showUpdateButton: true,
+                            downloadUrl:
+                                'https://github.com/gjwgit/rattle/releases/latest',
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      VersionWidget(
-                        version: '6.5.15',
-                        changelogUrl:
-                            'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
-                        showDate: true,
-                        fontSize: 14.0,
-                        showUpdateButton: true,
-                        downloadUrl:
-                            'https://github.com/gjwgit/rattle/releases/latest',
-                        updateButtonLabel: 'Get latest',
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
 
-              // An out of date version number is tested with no date but with a
-              // username in the CHANGELOG.
-              Card(
-                margin: EdgeInsets.all(8),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Text(
-                        'github.com/gjwgit/rattle\n'
-                        'Old version in CHANGELOG without date.\n'
-                        'We should thus not see a date here.\n'
-                        'Expect bold red version and no date.\n'
-                        'Font size is 12.0\n'
-                        'Tap the string to see the CHANGELOG.',
+                  // Example 4: An out of date version number is tested with
+                  // no date but with a username in the CHANGELOG.
+                  Card(
+                    margin: EdgeInsets.all(8),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Text(
+                            'github.com/gjwgit/rattle\n'
+                            'Old version in CHANGELOG without date.\n'
+                            'We should thus not see a date here.\n'
+                            'Expect bold red version and no date.\n'
+                            'Font size is 12.0\n'
+                            'Tap the string to see the CHANGELOG.',
+                          ),
+                          SizedBox(height: 8),
+                          VersionWidget(
+                            version: '6.1.14',
+                            changelogUrl:
+                                'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
+                            showDate: true,
+                            fontSize: 12.0,
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      VersionWidget(
-                        version: '6.1.14',
-                        changelogUrl:
-                            'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
-                        showDate: true,
-                        fontSize: 12.0,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              Card(
-                margin: EdgeInsets.all(8),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Text(
-                        'github.com/gjwgit/rattle\n'
-                        'Future version not in the CHANGELOG.\n'
-                        'We should thus not see a date here.\n'
-                        'Expect blue version and no date.\n'
-                        'Font size is 10.0\n'
-                        'Tap the string to see the CHANGELOG.',
+            ),
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  Card(
+                    margin: EdgeInsets.all(8),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Text(
+                            'github.com/gjwgit/rattle\n'
+                            'Future version not in the CHANGELOG.\n'
+                            'We should thus not see a date here.\n'
+                            'Expect blue version and no date.\n'
+                            'Font size is 10.0\n'
+                            'Tap the string to see the CHANGELOG.',
+                          ),
+                          SizedBox(height: 8),
+                          VersionWidget(
+                            version: '7.0.0',
+                            changelogUrl:
+                                'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
+                            showDate: true,
+                            fontSize: 10.0,
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      VersionWidget(
-                        version: '7.0.0',
-                        changelogUrl:
-                            'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
-                        showDate: true,
-                        fontSize: 10.0,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
 
-              // An out of date version number is tested with no date but with a
-              // username in the CHANGELOG.
-              Card(
-                margin: EdgeInsets.all(8),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Text(
-                        'github.com/gjwgit/rattle\n'
-                        'Old version not in the CHANGELOG.\n'
-                        'We should thus not see a date here.\n'
-                        'Expect bold red version and no date.\n'
-                        'Font size is 8.0\n'
-                        'Tap the string to see the CHANGELOG.',
+                  // Example 5: An out of date version number is tested with
+                  // no date but with a username in the CHANGELOG.
+                  Card(
+                    margin: EdgeInsets.all(8),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Text(
+                            'github.com/gjwgit/rattle\n'
+                            'Old version not in the CHANGELOG.\n'
+                            'We should thus not see a date here.\n'
+                            'Expect bold red version and no date.\n'
+                            'Font size is 8.0\n'
+                            'Tap the string to see the CHANGELOG.',
+                          ),
+                          SizedBox(height: 8),
+                          VersionWidget(
+                            version: '5.0.0',
+                            changelogUrl:
+                                'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
+                            showDate: true,
+                            fontSize: 8.0,
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      VersionWidget(
-                        version: '5.0.0',
-                        changelogUrl:
-                            'https://raw.githubusercontent.com/gjwgit/rattle/refs/heads/dev/CHANGELOG.md',
-                        showDate: true,
-                        fontSize: 8.0,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
 
-              // Demonstrates hiding the version label entirely while still
-              // surfacing the discover-and-download button when an outdated
-              // version is detected. Only the Update button should appear.
-              Card(
-                margin: EdgeInsets.all(8),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Text(
-                        'github.com/anusii/version_widget.git\n'
-                        'showVersion=false, showUpdateButton=true.\n'
-                        'Version label is hidden but the Update\n'
-                        'button is still rendered when a newer\n'
-                        'release is detected in the CHANGELOG.',
+                  // Example 6: Demonstrates hiding the version label entirely
+                  // while still surfacing the discover-and-download button
+                  // when an outdated version is detected. Only the Update
+                  // button should appear.
+                  Card(
+                    margin: EdgeInsets.all(8),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Text(
+                            'github.com/anusii/version_widget.git\n'
+                            'showVersion=false, showUpdateButton=true.\n'
+                            'Version label is hidden but the Update\n'
+                            'button is still rendered when a newer\n'
+                            'release is detected in the CHANGELOG.',
+                          ),
+                          SizedBox(height: 8),
+                          VersionWidget(
+                            version: '1.0.0',
+                            changelogUrl:
+                                'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
+                            showVersion: false,
+                            showUpdateButton: true,
+                            downloadUrl:
+                                'https://github.com/anusii/version_widget/releases/latest',
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8),
-                      VersionWidget(
-                        version: '1.0.0',
-                        changelogUrl:
-                            'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md',
-                        showVersion: false,
-                        showUpdateButton: true,
-                        downloadUrl:
-                            'https://github.com/anusii/version_widget/releases/latest',
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

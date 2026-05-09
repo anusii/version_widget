@@ -638,13 +638,25 @@ class _VersionWidgetState extends State<VersionWidget> {
       return const SizedBox.shrink();
     }
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (widget.showVersion) versionLabel,
-        if (updateButton != null) updateButton,
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final hasFiniteWidth = constraints.maxWidth.isFinite;
+        final boundedVersionLabel = hasFiniteWidth
+            ? ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: constraints.maxWidth),
+                child: versionLabel,
+              )
+            : versionLabel;
+
+        return Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          runSpacing: 4,
+          children: [
+            if (widget.showVersion) boundedVersionLabel,
+            if (updateButton != null) updateButton,
+          ],
+        );
+      },
     );
   }
 }
