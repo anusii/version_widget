@@ -96,6 +96,25 @@ while [[ "$1" != "" ]]; do
     esac
 done
 
+# 20260324 gjw Ignore files listed in .locignore
+
+# Read .locignore patterns into an array
+
+if [ -e .locignore ]; then
+    declare -a IGNORE_PATTERNS
+    while IFS= read -r pattern; do
+	[[ -z "$pattern" || "$pattern" =~ ^# ]] && continue
+	IGNORE_PATTERNS+=("$pattern")
+    done < .locignore
+
+    # Handle last line if it doesn't end with a newline
+
+    if [[ -n "$pattern" && "$pattern" != \#* ]]; then
+	IGNORE_PATTERNS+=("$pattern")
+    fi
+
+fi
+
 # Filter FILES array
 
 declare -a FILTERED_FILES
