@@ -29,6 +29,7 @@ access.
 - Visual indicator for outdated version
 - Network connectivity handling
 - Formatted date display (DD MMM YYYY)
+- Optional inline discover-and-download button when a newer release is detected
 
 ## Installation
 
@@ -75,6 +76,34 @@ VersionWidget(
 )
 ```
 
+With the discover-and-download button enabled. When the widget detects
+a newer release in the CHANGELOG it renders a small button to the
+right of the version label. Tapping the button opens
+`downloadUrl` in the default external handler (typically the system
+browser or platform installer).
+
+```dart
+VersionWidget(
+  version: '1.0.5',
+  changelogUrl: 'https://github.com/anusii/version_widget/raw/main/CHANGELOG.md',
+  showUpdateButton: true,
+  downloadUrl: 'https://example.com/downloads/myapp-latest.exe',
+)
+```
+
+Hide the version number text but keep the update button visible
+(useful when only the upgrade affordance is desired):
+
+```dart
+VersionWidget(
+  version: '1.0.5',
+  changelogUrl: 'https://github.com/anusii/version_widget/raw/main/CHANGELOG.md',
+  showVersion: false,
+  showUpdateButton: true,
+  downloadUrl: 'https://example.com/downloads/myapp-latest.exe',
+)
+```
+
 ## Version Status Indicators
 
 - Grey text: Version is being checked
@@ -103,11 +132,23 @@ changelog.
 
 - `version` (required): The version string to display. Must be provided.
 - `changelogUrl` (optional): URL to the CHANGELOG.md file
+- `showVersion` (optional): Whether to show the version number text
+  (defaults to true). When false the text is hidden but the changelog
+  is still consulted so the optional update button can still appear.
 - `showDate` (optional): Whether to show the release date (defaults to true)
 - `defaultDate` (optional): Default date to show if changelog cannot
   be fetched (format: YYYYMMDD)
 - `isLatestTooltip` (optional): Custom message to show when version is latest
 - `notLatestTooltip` (optional): Custom message to show when newer version is available
+- `showUpdateButton` (optional): Whether to show the discover-and-download
+  button when a newer version is detected (defaults to false). The
+  button is only rendered when this flag is enabled, a newer version
+  is found and `downloadUrl` is provided.
+- `downloadUrl` (optional): URL launched when the update button is
+  tapped. Typically points at an installer (.exe, .apk, .dmg) or a
+  release page. Required for the update button to be rendered.
+- `updateButtonLabel` (optional): Text label shown next to the icon on
+  the update button (defaults to `Update`).
 
 ## Contributing
 
