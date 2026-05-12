@@ -9,7 +9,7 @@ utilised by the flutter version_widget package.
 
 ## 1.1 Review and Consolidate
 
-+ Restore version string colours for status [0.1.10 20260512 tonypioneer]
++ Restore version string colours for status [1.0.10 20260512 tonypioneer]
 + Add an UPDATE button [1.0.9 20260510 tonypioneer]
 + Better tooltip formatting [1.0.8 20260429 gjw]
 + Tooltip headline rather than paragraph [1.0.7 20260429 gjw]
