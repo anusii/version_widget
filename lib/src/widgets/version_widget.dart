@@ -532,31 +532,29 @@ class _VersionWidgetState extends State<VersionWidget> {
     }
   }
 
-  /// Resolves the [TextStyle] applied to the version label.
+  /// The [TextStyle] applied to the version label.
   ///
-  /// 1. When [VersionWidget.userTextStyle] is null, the legacy automatic
-  ///    palette is used: grey while still checking, blue when the
-  ///    installed version matches the CHANGELOG, and red plus bold when
-  ///    a newer release has been detected.
+  /// Selected from three cases, in order:
+  ///
+  /// 1. When [VersionWidget.userTextStyle] is null, the built-in palette
+  ///    is used: grey while still checking, blue when the installed
+  ///    version matches the CHANGELOG, and red plus bold when a newer
+  ///    release has been detected.
   /// 2. When [VersionWidget.userTextStyle] is provided and the installed
   ///    version is up to date (or the check has not yet completed) the
   ///    host-supplied style is used verbatim, so the version label
-  ///    integrates with the surrounding theme exactly as before.
+  ///    integrates with the surrounding theme.
   /// 3. When [VersionWidget.userTextStyle] is provided and a newer
   ///    release has been detected, the host-supplied style is preserved
   ///    for every field except `color` and `fontWeight`, which are
-  ///    escalated to red and bold respectively. This guarantees that the
-  ///    upgrade warning remains visible even when a host has supplied a
-  ///    custom text style. Hosts that need to opt out of the warning
-  ///    colours should not enable changelog-driven version checking.
+  ///    set to red and bold respectively so the upgrade warning remains
+  ///    visible.
 
-  TextStyle _resolveDisplayStyle() {
-    final autoColour = _isChecking
-        ? Colors.grey
-        : (_isLatest ? Colors.blue : Colors.red);
-    final autoWeight = (_isChecking || _isLatest)
-        ? FontWeight.normal
-        : FontWeight.bold;
+  TextStyle _versionLabelStyle() {
+    final autoColour =
+        _isChecking ? Colors.grey : (_isLatest ? Colors.blue : Colors.red);
+    final autoWeight =
+        (_isChecking || _isLatest) ? FontWeight.normal : FontWeight.bold;
 
     final userStyle = widget.userTextStyle;
     if (userStyle == null) {
@@ -688,7 +686,7 @@ class _VersionWidgetState extends State<VersionWidget> {
           message: tooltipMessage,
           child: Text(
             displayText,
-            style: _resolveDisplayStyle(),
+            style: _versionLabelStyle(),
           ),
         ),
       ),
