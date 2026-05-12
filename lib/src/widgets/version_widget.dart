@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Saturday 2026-05-09 17:30:00 +1000 Tony Chen>
+// Time-stamp: <Tuesday 2026-05-12 14:50:00 +1000 Tony Chen>
 ///
 /// Copyright (C) 2024-2026, Software Innovation Institute, ANU.
 ///
@@ -50,10 +50,18 @@ import 'package:version_widget/src/utils/compare_versions.dart';
 ///
 /// Styling of the version string is offered in two modes:
 ///
-/// 1. Automatic mode: version styled with colour denoting package status
-///    (blue: up to date, red: newer version available, grey: version
-///     being checked).
-/// 2. Manual mode: user specified TextStyle().
+/// 1. Automatic mode: when no [userTextStyle] is supplied, the version is
+///    styled with colour denoting package status (blue: up to date, red:
+///    newer version available, grey: version being checked).
+/// 2. Custom mode: when a [userTextStyle] is supplied the host style is
+///    used verbatim while the version is up to date or still being
+///    checked. As soon as a newer release is detected the host style is
+///    preserved for every other field (font family, size, letter
+///    spacing, decoration, etc.) but `color` and `fontWeight` are
+///    escalated to red and bold so the upgrade warning remains visible.
+///    This is fully backward compatible: existing hosts keep their
+///    chosen styling for the up-to-date case and only see the warning
+///    palette appear when an update is genuinely available.
 ///
 /// When a newer version is detected and [showUpdateButton] is enabled, an
 /// inline action button is rendered to the right of the version text. Tapping
@@ -118,7 +126,13 @@ class VersionWidget extends StatefulWidget {
 
   final double? fontSize;
 
-  /// Allow the user to specify the full [userTextStyle] to suit the app.
+  /// Allow the host to specify a custom [userTextStyle] that the version
+  /// label should adopt. The provided style is used verbatim while the
+  /// installed version is up to date or the changelog check is still in
+  /// flight. When the changelog reports a newer release available the
+  /// supplied style is preserved for every field except `color` and
+  /// `fontWeight`, which are escalated to red and bold so the upgrade
+  /// warning stays visible regardless of the host's theming choices.
 
   final TextStyle? userTextStyle;
 
@@ -518,6 +532,59 @@ class _VersionWidgetState extends State<VersionWidget> {
     }
   }
 
+  /// Resolves the [TextStyle] applied to the version label.
+  ///
+  /// 1. When [VersionWidget.userTextStyle] is null, the legacy automatic
+  ///    palette is used: grey while still checking, blue when the
+  ///    installed version matches the CHANGELOG, and red plus bold when
+  ///    a newer release has been detected.
+  /// 2. When [VersionWidget.userTextStyle] is provided and the installed
+  ///    version is up to date (or the check has not yet completed) the
+  ///    host-supplied style is used verbatim, so the version label
+  ///    integrates with the surrounding theme exactly as before.
+  /// 3. When [VersionWidget.userTextStyle] is provided and a newer
+  ///    release has been detected, the host-supplied style is preserved
+  ///    for every field except `color` and `fontWeight`, which are
+  ///    escalated to red and bold respectively. This guarantees that the
+  ///    upgrade warning remains visible even when a host has supplied a
+  ///    custom text style. Hosts that need to opt out of the warning
+  ///    colours should not enable changelog-driven version checking.
+
+  TextStyle _resolveDisplayStyle() {
+    final autoColour = _isChecking
+        ? Colors.grey
+        : (_isLatest ? Colors.blue : Colors.red);
+    final autoWeight = (_isChecking || _isLatest)
+        ? FontWeight.normal
+        : FontWeight.bold;
+
+    final userStyle = widget.userTextStyle;
+    if (userStyle == null) {
+      return TextStyle(
+        color: autoColour,
+        fontSize: widget.fontSize,
+        fontWeight: autoWeight,
+      );
+    }
+
+    final isOutdated = !_isChecking && !_isLatest;
+    if (isOutdated) {
+      // Outdated: escalate to the warning palette while preserving every
+      // other style field provided by the host (font family, size,
+      // letter spacing, decoration, etc.).
+
+      return userStyle.copyWith(
+        color: Colors.red,
+        fontWeight: FontWeight.bold,
+      );
+    }
+
+    // Up to date or still checking: hand back the host's style verbatim
+    // for full visual parity with the previous behaviour.
+
+    return userStyle;
+  }
+
   /// Builds the inline discover-and-download action button surfaced when a
   /// newer release is detected. Returns null when the button should not be
   /// rendered for the current state.
@@ -621,17 +688,7 @@ class _VersionWidgetState extends State<VersionWidget> {
           message: tooltipMessage,
           child: Text(
             displayText,
-            style: (widget.userTextStyle != null)
-                ? widget.userTextStyle
-                : TextStyle(
-                    color: _isChecking
-                        ? Colors.grey
-                        : (_isLatest ? Colors.blue : Colors.red),
-                    fontSize: widget.fontSize,
-                    fontWeight: _isChecking
-                        ? FontWeight.normal
-                        : (_isLatest ? FontWeight.normal : FontWeight.bold),
-                  ),
+            style: _resolveDisplayStyle(),
           ),
         ),
       ),
