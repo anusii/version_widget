@@ -135,6 +135,35 @@ class MyHomePage extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  // Example 2b: A CHANGELOG that cannot be reached. Before
+                  // 1.1.0 this rendered exactly like Example 1 — blue, and
+                  // silently wrong. It now says that nothing is known.
+                  Card(
+                    margin: EdgeInsets.all(8),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Text(
+                            'A changelog URL that 404s.\n'
+                            'Expect an amber version and no date.\n'
+                            'No Update button: no update is known of.\n'
+                            'Hover to see why the check did not complete.',
+                          ),
+                          SizedBox(height: 8),
+                          VersionWidget(
+                            version: '1.0.2',
+                            changelogUrl:
+                                'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/NO_SUCH_FILE.md',
+                            showUpdateButton: true,
+                            downloadUrl:
+                                'https://github.com/anusii/version_widget/releases/latest',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

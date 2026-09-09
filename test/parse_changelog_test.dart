@@ -133,6 +133,24 @@ void main() {
     });
   });
 
+  group('isComparableVersion', () {
+    test('accepts anything carrying a digit', () {
+      expect(isComparableVersion('0.1.14'), isTrue);
+      expect(isComparableVersion('1'), isTrue);
+      expect(isComparableVersion('2.0.0-beta'), isTrue);
+    });
+
+    test('rejects a version the app could not supply', () {
+      // An empty string is what package_info_plus returns when the build
+      // carries no CFBundleShortVersionString. Comparing it would rank the
+      // app below every release.
+
+      expect(isComparableVersion(''), isFalse);
+      expect(isComparableVersion('   '), isFalse);
+      expect(isComparableVersion('unknown'), isFalse);
+    });
+  });
+
   group('dateForVersion', () {
     final entries = parseChangelogEntries(canonicalChangelog);
 

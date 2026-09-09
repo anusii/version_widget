@@ -28,4 +28,5 @@
 
 library;
 
+export 'src/utils/fetch_changelog.dart' show ChangelogLoader;
 export 'src/widgets/version_widget.dart' show VersionWidget;

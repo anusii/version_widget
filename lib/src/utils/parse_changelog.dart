@@ -111,6 +111,15 @@ String? latestVersionOf(List<ChangelogEntry> entries) {
   return latest;
 }
 
+/// Whether [version] can be meaningfully compared against another.
+///
+/// Requires at least one digit. An app that does not know its own version
+/// hands us an empty string — a misconfigured Info.plist will do it — and
+/// comparing that against a real release would rank it below everything,
+/// reporting a confident 'outdated' from no information at all.
+
+bool isComparableVersion(String version) => version.contains(RegExp(r'\d'));
+
 /// The date recorded against [version], or null when it is not listed.
 ///
 /// An app running a version that predates the CHANGELOG, or a development
