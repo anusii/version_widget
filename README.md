@@ -192,7 +192,7 @@ session already provides, or make the changelog public.
   is still consulted so the optional update button can still appear.
 - `showDate` (optional): Whether to show the release date (defaults to true)
 - `defaultDate` (optional): Default date to show if changelog cannot
-  be fetched (format: YYYYMMDD)
+  be fetched (format: `YYYYMMDD`)
 - `isLatestTooltip` (optional): Custom message to show when version is latest
 - `notLatestTooltip` (optional): Custom message to show when newer version is available
 - `unknownTooltip` (optional): Custom message to show when the check could
