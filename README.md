@@ -229,6 +229,7 @@ In `Runner/Info.plist` within `macos` and `ios` folders, set:
 	<string>$(FLUTTER_BUILD_NAME)</string>
 ```
 If using `xcodegen` to generate XCode files, your `macos` and `ios` `project.yml` files must contain:
+
 ```yml
 MARKETING_VERSION: '$(FLUTTER_BUILD_NAME)'
 CURRENT_PROJECT_VERSION: '$(FLUTTER_BUILD_NUMBER)'
