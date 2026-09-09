@@ -109,22 +109,14 @@ VersionWidget(
 - Grey text: Version is being checked
 - Blue text: Version is up to date
 - Red bold text: Newer version is available
-- Amber text: The version could not be checked
+- Amber text: The version could not be checked (eg unpublished changelog, CORS block to changelog, app with no version)
 
-The amber state matters. Before 1.1.0 a check that failed — a moved or
-private CHANGELOG, a CORS block, a file the widget could not parse — was
-reported as though the app were up to date, so an app could claim to be
-current indefinitely while never once succeeding at the check. A failed
-check now says so, and does not offer an update button, since no update
-is known to exist. Pass `assumeLatestOnCheckFailure: true` to restore
+A failed
+check is reported and does not offer an app update button. Pass `assumeLatestOnCheckFailure: true` to restore
 the older, quieter behaviour.
 
-The same applies when the app cannot report its own version — an empty
-or non-numeric `version`, which on Apple platforms usually means the
-build carries no `CFBundleShortVersionString`. That compares as older
-than every release, so without the guard the widget would announce an
-update on the strength of no information at all. It reports the version
-as unknown instead.
+Apps that do not report their own version — an empty
+or non-numeric `version` are also now reported as a failed check.
 
 ## CHANGELOG.md Format
 
@@ -147,22 +139,17 @@ changelog.
 
 ## Private repositories
 
-The widget fetches the CHANGELOG with a plain, unauthenticated GET, so
-the file must be reachable without credentials. The repository being
-private is not itself a problem — publishing the CHANGELOG somewhere
-public is usually the simplest answer, and for a web app, serving it
-from the same origin as the app avoids CORS entirely:
+The CHANGELOG must be published, as the widget fetches the CHANGELOG with a plain, unauthenticated GET. 
+
+Developers with private app repositories are recommended to publish their changelog to the same origin as the web app, to avoid CORS block issues. Ie build your web app and then add publish CHANGELOG file.
 
 ```make
 flutter build web --release
 cp CHANGELOG.md build/web/CHANGELOG.md    # after the build, not in web/
 ```
 
-Copy it after the build rather than committing it to `web/`. That keeps
-one source of truth, and keeps the file out of anything Flutter
-generates from `web/` — older Flutter versions pre-cached everything
-there into a service worker, which would have served users a cached
-copy of the changelog they already had.
+Copy it after the build keeps the file out of anything Flutter
+generates from `web/` to prevent caching issues.
 
 When the changelog genuinely cannot be made public, supply a
 `changelogLoader` and fetch it yourself:
@@ -193,9 +180,7 @@ VersionWidget(
 )
 ```
 
-Never compile a long lived credential such as a GitHub personal access
-token into the app to do this. A shipped binary is readable by anyone
-who has it, and a web build most of all. Use a token the user's own
+Never compile a long lived credential. Use a token the user's own
 session already provides, or make the changelog public.
 
 ## Properties
