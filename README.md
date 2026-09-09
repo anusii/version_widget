@@ -109,11 +109,11 @@ VersionWidget(
 - Grey text: Version is being checked
 - Blue text: Version is up to date
 - Red bold text: Newer version is available
-- Amber text: The version could not be checked (eg unpublished changelog, CORS block to changelog, app with no version)
+- Amber text: The version could not be checked (eg unpublished changelog, CORS
+  block to changelog, app with no version)
 
-A failed
-check is reported and does not offer an app update button. Pass `assumeLatestOnCheckFailure: true` to restore
-the older, quieter behaviour.
+A failed check is reported and does not offer an app update button. Pass
+`assumeLatestOnCheckFailure: true` to restore the older, quieter behaviour.
 
 Apps that do not report their own version — an empty
 or non-numeric `version` are also now reported as a failed check.
@@ -139,9 +139,12 @@ changelog.
 
 ## Private repositories
 
-The CHANGELOG must be published, as the widget fetches the CHANGELOG with a plain, unauthenticated GET. 
+The CHANGELOG must be published, as the widget fetches the CHANGELOG with a
+plain, unauthenticated GET.
 
-Developers with private app repositories are recommended to publish their changelog to the same origin as the web app, to avoid CORS block issues. Ie build your web app and then add publish CHANGELOG file.
+Developers with private app repositories are recommended to publish their
+changelog to the same origin as the web app, to avoid CORS block issues. Ie
+build your web app and then add publish CHANGELOG file.
 
 ```make
 flutter build web --release
@@ -221,14 +224,23 @@ session already provides, or make the changelog public.
 
 ### MacOS/iOS
 
-MacOS and iOS builds of apps using version widget require these settings to pick up the app version, which is used to compare against the changelog
+MacOS and iOS builds of apps using version widget require these settings to pick
+up the app version, which is used to compare against the changelog
 
 In `Runner/Info.plist` within `macos` and `ios` folders, set:
+
+<!-- Tabs below are verbatim from Info.plist, so keep them as tabs. -->
+<!-- markdownlint-disable MD010 -->
+
 ```xml
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 ```
-If using `xcodegen` to generate XCode files, your `macos` and `ios` `project.yml` files must contain:
+
+<!-- markdownlint-enable MD010 -->
+
+If using `xcodegen` to generate XCode files, your `macos` and `ios`
+`project.yml` files must contain:
 
 ```yml
 MARKETING_VERSION: '$(FLUTTER_BUILD_NAME)'
