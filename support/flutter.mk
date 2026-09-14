@@ -586,10 +586,24 @@ lychee:
 	-lychee --no-progress --format compact *.md ./**/*.dart $(if $(wildcard ./**/*.md),./**/*.md) $(if $(wildcard ./**/*.html),./**/*.html)
 	@echo $(SEPARATOR)
 
+# 20260915 gjw The archive version should be the latest version for
+# which a full `ginstall` ran, not simply the newest deb. A local `make
+# deb` drops a single deb into ARCHIVE, so taking the last deb reported
+# a version that was never actually released. A ginstall lands the
+# whole set (deb, snap, linux/macos/windows zips, dmg, inno exe, apk,
+# aab), so require at least ARCHIVE_MIN files sharing a version before
+# believing it.
+
+ARCHIVE_MIN = 4
+
 .PHONY: version
 version:
 	@grep version: pubspec.yaml | sed 's/^version:/pubspec:/'
-	@echo "archive: $(shell ls installers/ARCHIVE/*deb | cut -d_ -f2 | sort -V | tail -n1)"
+	@echo "archive: $$(ls installers/ARCHIVE/ 2>/dev/null \
+	  | sed 's/^$(APP)[-_]//' \
+	  | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+' \
+	  | sort -V | uniq -c \
+	  | awk '$$1 >= $(ARCHIVE_MIN) { v = $$2 } END { print v }')"
 
 ### TODO THESE SHOULD BE CHECKED AND CLEANED UP
 
@@ -601,19 +615,24 @@ docs::
 # installation stanza pins `<pkg>: ^x.y.z` and the usage examples pass
 # `version: 'x.y.z'` — and both go stale silently, telling readers to
 # install a release we are well past. Bring them into step with the
-# pubspec here, then list what was set so it can be eyeballed. Version
-# strings inside the CHANGELOG format section are left alone: they are
-# illustrating the format, not naming this release.
+# pubspec here, then list what was set so it can be eyeballed, staying
+# quiet for a README that never names a version. Version strings inside
+# the CHANGELOG format section are left alone: they are illustrating the
+# format, not naming this release.
 
 .PHONY: versions
 versions:
-	if [ -d snap ]; then perl -pi -e 's|^version:.*|version: $(VER)|' snap/snapcraft.yaml; fi
+	@if [ -f snap/snapcraft.yaml ]; then \
+	  perl -pi -e 's|^version:.*|version: $(VER)|' snap/snapcraft.yaml; \
+	  echo "Updated version in snap/snapcraft.yaml to $(VER)"; \
+	fi
 	@if [ -f README.md ] && [ -n "$(PKG)" ]; then \
 	  perl -pi -e 's|^(\s*$(PKG): \^)\d+\.\d+\.\d+|$${1}$(VER)|' README.md; \
 	  perl -pi -e 's|^(\s*version: \x27)\d+\.\d+\.\d+(\x27)|$${1}$(VER)$${2}|' README.md; \
-	  echo "Versions: README.md set to $(VER)"; \
-	  grep -n -E "^ *($(PKG): \^|version: ')[0-9]" README.md; \
-	  echo $(SEPARATOR); \
+	  if grep -q -E "^ *($(PKG): \^|version: ')[0-9]" README.md; then \
+	    echo "Updated versions in README.md to $(VER)"; \
+	    grep -n -E "^ *($(PKG): \^|version: ')[0-9]" README.md; \
+	  fi; \
 	fi
 
 

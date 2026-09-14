@@ -1,6 +1,6 @@
 /// A demonstration of the VersionWidget app.
 ///
-// Time-stamp: <Saturday 2026-05-09 18:20:00 +1000 Tony Chen>
+// Time-stamp: <Tuesday 2026-09-15 06:13:46 +1000 Graham Williams>
 ///
 /// Copyright (C) 2025-2026, Software Innovation Institute ANU
 ///
@@ -60,8 +60,7 @@ class MyApp extends StatelessWidget {
 /// The CHANGELOG of this package, as published on GitHub.
 
 const changelogUrl =
-    'https://raw.githubusercontent.com/anusii/'
-    'version_widget/refs/heads/main/CHANGELOG.md';
+    'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/CHANGELOG.md';
 
 /// The version of this package, as in its pubspec. Kept in one place so the
 /// examples that claim to show the current version keep saying so after a
@@ -204,7 +203,9 @@ class MyHomePage extends StatelessWidget {
                               VersionWidget(
                                 version: '1.0.2',
                                 changelogUrl:
-                                    'https://raw.githubusercontent.com/anusii/version_widget/refs/heads/main/NO_SUCH_FILE.md',
+                                    'https'
+                                    '://raw.githubusercontent.com/anusii/'
+                                    'version_widget/refs/heads/main/NO_SUCH_FILE.md',
                                 showUpdateButton: true,
                                 downloadUrl:
                                     'https://github.com/anusii/version_widget/releases/latest',
