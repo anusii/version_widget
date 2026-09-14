@@ -109,15 +109,24 @@ VersionWidget(
 - Grey text: Version is being checked
 - Blue text: Version is up to date
 - Red bold text: Newer version is available
-- No date shown: Internet connection unavailable
+- Amber text: The version could not be checked (eg unpublished changelog, CORS
+  block to changelog, app with no version)
+
+A failed check is reported and does not offer an app update button. Pass
+`assumeLatestOnCheckFailure: true` to restore the older, quieter behaviour.
+
+Apps that do not report their own version — an empty
+or non-numeric `version` are also now reported as a failed check.
 
 ## CHANGELOG.md Format
 
 The widget expects the CHANGELOG.md file to have dates in the
 following format. The important part is `[1.0.5 20250101` and the
 first such text found is interpreted as the latest version and
-timestamp. This allows, for example, the string to be `[1.0.5 20250514
-fred]` as a common format to attribute changes to users.
+timestamp. An author may sit on either side of the date, so both
+`[1.0.5 20250514 fred]` and `[1.0.5 fred 20250514]` are read correctly.
+The first form is the convention across our apps; the second is
+tolerated so an app is not silently unversioned for writing it.
 
 ```markdown
 ## [1.0.5 20250101]
@@ -128,6 +137,55 @@ The widget will automatically find the correct release date for the
 current version by matching against all version entries in the
 changelog.
 
+## Private repositories
+
+The CHANGELOG must be published, as the widget fetches the CHANGELOG with a
+plain, unauthenticated GET.
+
+Developers with private app repositories are recommended to publish their
+changelog to the same origin as the web app, to avoid CORS block issues. Ie
+build your web app and then add publish CHANGELOG file.
+
+```make
+flutter build web --release
+cp CHANGELOG.md build/web/CHANGELOG.md    # after the build, not in web/
+```
+
+Copy it after the build keeps the file out of anything Flutter
+generates from `web/` to prevent caching issues.
+
+When the changelog genuinely cannot be made public, supply a
+`changelogLoader` and fetch it yourself:
+
+```dart
+// From an authenticated backend, using a token the app already holds
+// from the signed in session.
+
+VersionWidget(
+  version: '1.0.5',
+  changelogUrl: 'https://api.example.com/changelog',
+  changelogLoader: (url) async {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer ${session.accessToken}'},
+    );
+    return response.body;
+  },
+)
+
+// Or bundled with the build. This populates the changelog dialogue but
+// can never detect an update, since it is frozen at build time.
+
+VersionWidget(
+  version: '1.0.5',
+  changelogUrl: 'asset',
+  changelogLoader: (_) => rootBundle.loadString('assets/CHANGELOG.md'),
+)
+```
+
+Never compile a long lived credential. Use a token the user's own
+session already provides, or make the changelog public.
+
 ## Properties
 
 - `version` (required): The version string to display. Must be provided.
@@ -137,9 +195,21 @@ changelog.
   is still consulted so the optional update button can still appear.
 - `showDate` (optional): Whether to show the release date (defaults to true)
 - `defaultDate` (optional): Default date to show if changelog cannot
-  be fetched (format: YYYYMMDD)
+  be fetched (format: `YYYYMMDD`)
 - `isLatestTooltip` (optional): Custom message to show when version is latest
 - `notLatestTooltip` (optional): Custom message to show when newer version is available
+- `unknownTooltip` (optional): Custom message to show when the check could
+  not be completed
+- `unknownColor` (optional): Colour of the version label when the check
+  could not be completed (defaults to a muted amber). Applied on top of
+  `userTextStyle` too, so pick one that stays legible on your background.
+- `assumeLatestOnCheckFailure` (optional): Report a failed check as up to
+  date, as releases before 1.1.0 did (defaults to false)
+- `changelogLoader` (optional): Supplies the CHANGELOG text instead of the
+  built-in HTTP GET. See Private repositories above.
+- `onUpdatePressed` (optional): Called instead of launching `downloadUrl`
+  when the update button is tapped. Useful for a web app, where the update
+  is a reload rather than an installer.
 - `showUpdateButton` (optional): Whether to show the discover-and-download
   button when a newer version is detected (defaults to false). The
   button is only rendered when this flag is enabled, a newer version
@@ -149,6 +219,33 @@ changelog.
   release page. Required for the update button to be rendered.
 - `updateButtonLabel` (optional): Text label shown next to the icon on
   the update button (defaults to `Update`).
+
+## Platform setup
+
+### MacOS/iOS
+
+MacOS and iOS builds of apps using version widget require these settings to pick
+up the app version, which is used to compare against the changelog
+
+In `Runner/Info.plist` within `macos` and `ios` folders, set:
+
+<!-- Tabs below are verbatim from Info.plist, so keep them as tabs. -->
+<!-- markdownlint-disable MD010 -->
+
+```xml
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+```
+
+<!-- markdownlint-enable MD010 -->
+
+If using `xcodegen` to generate XCode files, your `macos` and `ios`
+`project.yml` files must contain:
+
+```yml
+MARKETING_VERSION: '$(FLUTTER_BUILD_NAME)'
+CURRENT_PROJECT_VERSION: '$(FLUTTER_BUILD_NUMBER)'
+```
 
 ## Contributing
 

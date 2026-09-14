@@ -9,11 +9,12 @@ utilised by the flutter version_widget package.
 
 ## 1.1 Review and Consolidate
 
++ Report failed checks rather than assuming latest [1.1.0 20260909 jesscmoore]
 + Restore version string colours for status [1.0.10 20260512 tonypioneer]
 + Add an UPDATE button [1.0.9 20260510 tonypioneer]
 + Better tooltip formatting [1.0.8 20260429 gjw]
 + Tooltip headline rather than paragraph [1.0.7 20260429 gjw]
-+ Better CHANGELOG. Rosolve CORS issue [1.0.6 20251027 tonypioneer]
++ Better CHANGELOG. Resolve CORS issue [1.0.6 20251027 tonypioneer]
 + Update tooltip text [1.0.5 20250928 gjw]
 + Support user text style for Version string [1.0.4 20250722 jesscmoore]
 + Support VersionWidget fontSize [1.0.3 20250717 gjw]
@@ -34,7 +35,7 @@ utilised by the flutter version_widget package.
 + Fixed version date display [0.0.7 20250429 kev]
 + Improved parsing extract all version-date pairs [0.0.7 20250429 kev]
 + Find the correct date for each version [0.0.7 20250429 kev]
-+ Updated doc to reflect the new date matching behavior [0.0.7 20250429 kev]
++ Updated doc to reflect the new date matching behaviour [0.0.7 20250429 kev]
 + Made version parameter required in VersionWidget [0.0.6 20250428 kev]
 + Removed version extraction from changelog [0.0.6 20250428 kev]
 + Simplified changelog fetching logic [0.0.6 20250428 kev]

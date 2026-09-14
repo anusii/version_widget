@@ -49,6 +49,8 @@ flutter:
   depend	  Run `dart run dependency_validator`.
   ignore          Look for usage of ignore directives.
   license	  Look for missing top license in source code.
+  markdown        Lint check the markdown files
+  lychee          Look for broken links
 
   test	    	  Run flutter testing.
   itest	    	  Run flutter interation testing.

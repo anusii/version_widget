@@ -1,6 +1,6 @@
 /// Version widget for the app.
 ///
-// Time-stamp: <Tuesday 2026-05-12 14:50:00 +1000 Tony Chen>
+// Time-stamp: <Wednesday 2026-09-09 09:24:05 +1000 Jess Moore>
 ///
 /// Copyright (C) 2024-2026, Software Innovation Institute, ANU.
 ///
@@ -24,49 +24,50 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <https://choosealicense.com/licenses/mit/>.
 ///
-/// Authors: Kevin Wang, Tony Chen.
+/// Authors: Kevin Wang, Tony Chen, Jess Moore
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:http/http.dart' as http;
 import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:version_widget/src/models/version_status.dart';
 import 'package:version_widget/src/utils/compare_versions.dart';
+import 'package:version_widget/src/utils/fetch_changelog.dart';
+import 'package:version_widget/src/utils/format_date.dart';
+import 'package:version_widget/src/utils/parse_changelog.dart';
+import 'package:version_widget/src/widgets/version_changelog_dialog.dart';
 
-/// A widget that displays version information with optional changelog date and link.
+/// A widget that displays version information with optional changelog date
+/// and link.
 ///
-/// This widget can be used to show the current version of an app, optionally
-/// including the release date from a CHANGELOG file and providing a link to
-/// view the full changelog.
+/// Shows the current version of an app, optionally including the release
+/// date read from a CHANGELOG, and offering a link to the full changelog.
 ///
-/// The widget supports three modes of operation:
+/// The widget reports one of five outcomes, and the distinction that matters
+/// most is between being up to date and not knowing:
 ///
-/// 1. Automatic mode: Fetches both version and date from a CHANGELOG.md file
-/// 2. Semi-automatic mode: Uses provided version but fetches date from CHANGELOG
-/// 3. Manual mode: Uses provided version and default date
+/// 1. Still checking — grey.
+/// 2. No [changelogUrl] configured, so nothing was checked — as before.
+/// 3. Up to date — blue.
+/// 4. A newer release exists — red, bold, with an optional update button.
+/// 5. The check failed — amber, and it says so rather than claiming the app
+///    is current. Set [assumeLatestOnCheckFailure] to restore the older,
+///    quieter behaviour.
 ///
 /// Styling of the version string is offered in two modes:
 ///
-/// 1. Automatic mode: when no [userTextStyle] is supplied, the version is
-///    styled with colour denoting package status (blue: up to date, red:
-///    newer version available, grey: version being checked).
-/// 2. Custom mode: when a [userTextStyle] is supplied the host style is
-///    used verbatim while the version is up to date or still being
-///    checked. As soon as a newer release is detected the host style is
-///    preserved for every other field (font family, size, letter
-///    spacing, decoration, etc.) but `color` and `fontWeight` are
-///    escalated to red and bold so the upgrade warning remains visible.
-///    This is fully backward compatible: existing hosts keep their
-///    chosen styling for the up-to-date case and only see the warning
-///    palette appear when an update is genuinely available.
-///
-/// When a newer version is detected and [showUpdateButton] is enabled, an
-/// inline action button is rendered to the right of the version text. Tapping
-/// the button launches [downloadUrl] in the default external handler so the
-/// user can fetch the latest installer or release page.
+/// 1. Automatic: when no [userTextStyle] is supplied, the version is styled
+///    with a colour denoting status.
+/// 2. Custom: when a [userTextStyle] is supplied the host style is used
+///    verbatim while the version is up to date or still being checked. When
+///    a newer release is detected the host style is preserved for every
+///    other field (font family, size, letter spacing, decoration) but
+///    `color` and `fontWeight` are escalated to red and bold so the upgrade
+///    warning remains visible. A failed check likewise escalates `color`
+///    alone, since a host style on a coloured background would otherwise
+///    hide the fact that nothing is known.
 ///
 /// Example usage:
 /// ```dart
@@ -74,11 +75,11 @@ import 'package:version_widget/src/utils/compare_versions.dart';
 ///   version: '1.0.5',
 ///   changelogUrl: 'https://github.com/anusii/version_widget/raw/main/CHANGELOG.md',
 ///   showDate: true,
-///   defaultDate: '20240101',
 ///   showUpdateButton: true,
 ///   downloadUrl: 'https://example.com/downloads/myapp-latest.exe',
 /// )
 /// ```
+
 class VersionWidget extends StatefulWidget {
   /// The version string to display (e.g., '1.0.0').
   /// The version should follow semantic versioning (e.g., '0.0.9').
@@ -86,8 +87,9 @@ class VersionWidget extends StatefulWidget {
   final String version;
 
   /// The URL to the CHANGELOG.md file.
-  /// If provided, the widget will attempt to extract the release date and version from it.
-  /// The changelog should follow the format: [x.x.x YYYYMMDD] for version entries.
+  /// If provided, the widget will attempt to extract the release date and
+  /// version from it. Entries are recognised as `[x.x.x YYYYMMDD]`, with an
+  /// optional author either side of the date.
 
   final String? changelogUrl;
 
@@ -105,11 +107,10 @@ class VersionWidget extends StatefulWidget {
 
   final bool showDate;
 
-  /// The default date to show if the changelog cannot be fetched.
-  /// Format should be 'YYYYMMDD'.
-  /// Defaults to '20250101'.
-  /// This is used as a fallback when the changelog is unavailable or invalid.
+  /// Unused. The date shown is always the one read from the CHANGELOG, and
+  /// no date is shown when the check does not produce one.
 
+  @Deprecated('Never read; will be removed in 2.0.0.')
   final String? defaultDate;
 
   /// Custom tooltip message to show when the version is the latest.
@@ -122,19 +123,40 @@ class VersionWidget extends StatefulWidget {
 
   final String? notLatestTooltip;
 
+  /// Custom tooltip message to show when the check could not be completed.
+  /// If not provided, uses a default message naming the likely causes.
+
+  final String? unknownTooltip;
+
+  /// The colour of the version label when the check could not be completed.
+  /// Defaults to a muted amber. Applied both in the built-in palette and on
+  /// top of a supplied [userTextStyle], so choose a shade that stays legible
+  /// against the background the version sits on.
+
+  final Color? unknownColor;
+
+  /// Whether a failed or unparsable check should be reported as up to date.
+  /// Defaults to false, which is almost always what you want: a silent and
+  /// false 'up to date' leaves users on stale builds indefinitely. Provided
+  /// to restore the behaviour of releases before 1.1.0.
+
+  final bool assumeLatestOnCheckFailure;
+
   /// Allow the user to override the [fontSize] to suit the app.
 
   final double? fontSize;
 
   /// Allow the host to specify a custom [userTextStyle] that the version
-  /// label should adopt. The provided style is used verbatim while the
-  /// installed version is up to date or the changelog check is still in
-  /// flight. When the changelog reports a newer release available the
-  /// supplied style is preserved for every field except `color` and
-  /// `fontWeight`, which are escalated to red and bold so the upgrade
-  /// warning stays visible regardless of the host's theming choices.
+  /// label should adopt. See the class documentation for when the style is
+  /// used verbatim and when `color` and `fontWeight` are escalated.
 
   final TextStyle? userTextStyle;
+
+  /// Supplies the CHANGELOG text instead of the built-in HTTP GET.
+  /// Use for a changelog the default fetch cannot reach: one behind
+  /// authentication, or one bundled with the build. See [ChangelogLoader].
+
+  final ChangelogLoader? changelogLoader;
 
   /// Whether to show the discover-and-download button when a newer version is
   /// detected.
@@ -142,18 +164,21 @@ class VersionWidget extends StatefulWidget {
   /// The button is only rendered when all of the following are true:
   /// 1. [showUpdateButton] is true
   /// 2. A newer version has been detected from the CHANGELOG
-  /// 3. [downloadUrl] is non-null and non-empty
-  /// Tapping the button launches [downloadUrl] using the platform's default
-  /// external handler (typically the system browser) so the user can fetch
-  /// the latest release.
+  /// 3. Either [downloadUrl] or [onUpdatePressed] is supplied
+  /// It is deliberately not offered when the check failed, since no update is
+  /// known to exist.
 
   final bool showUpdateButton;
 
   /// The URL to launch when the user taps the discover-and-download button.
   /// Typically points at an installer (.exe, .apk, .dmg) or a release page.
-  /// Required for the update button to be rendered.
 
   final String? downloadUrl;
+
+  /// Called instead of launching [downloadUrl] when the update button is
+  /// tapped. Lets a web host reload in place rather than open an installer.
+
+  final VoidCallback? onUpdatePressed;
 
   /// Optional label shown next to the download icon on the update button.
   /// Defaults to 'Update' when null.
@@ -161,8 +186,8 @@ class VersionWidget extends StatefulWidget {
   final String? updateButtonLabel;
 
   /// Creates a new [VersionWidget].
-  /// The [version] parameter is required and should be the current version of the app.
-  /// All other parameters are optional.
+  /// The [version] parameter is required and should be the current version of
+  /// the app. All other parameters are optional.
 
   const VersionWidget({
     super.key,
@@ -170,13 +195,19 @@ class VersionWidget extends StatefulWidget {
     this.changelogUrl,
     this.showVersion = true,
     this.showDate = true,
+    @Deprecated('Never read; will be removed in 2.0.0.')
     this.defaultDate = '20260101',
     this.isLatestTooltip,
     this.notLatestTooltip,
+    this.unknownTooltip,
+    this.unknownColor,
+    this.assumeLatestOnCheckFailure = false,
     this.fontSize = 16.0,
     this.userTextStyle,
+    this.changelogLoader,
     this.showUpdateButton = false,
     this.downloadUrl,
+    this.onUpdatePressed,
     this.updateButtonLabel,
   });
 
@@ -192,28 +223,23 @@ class VersionWidget extends StatefulWidget {
 /// - Handling user interactions
 
 class _VersionWidgetState extends State<VersionWidget> {
-  /// Indicates whether the current version is the latest version.
-  /// Used to determine the colour of the version text (blue for latest, red for outdated).
+  /// The outcome of the version check, driving colour, date and button.
 
-  bool _isLatest = true;
+  VersionStatus _status = VersionStatus.checking;
 
-  /// The latest version available from the changelog.
-  /// Used to compare with the current version to determine if an update is available.
+  /// The latest version available from the changelog. Empty until a check
+  /// succeeds, so it is never quoted at the user on a guess.
 
   String _latestVersion = '';
 
-  /// The current release date in YYYYMMDD format.
-  /// Either fetched from the changelog or using the default date.
+  /// The release date of the current version, in YYYYMMDD format, when the
+  /// changelog lists one for it.
 
   String _currentDate = '';
 
-  /// The current version string (e.g., '0.0.9').
-  /// Either provided through the widget or extracted from the changelog.
+  /// The current version string (e.g., '0.0.9'), as supplied by the host.
 
   String _currentVersion = '';
-
-  bool _isChecking = true;
-  bool _hasInternet = true;
 
   /// The full CHANGELOG content for display in the dialogue.
 
@@ -224,303 +250,118 @@ class _VersionWidgetState extends State<VersionWidget> {
     super.initState();
     _currentVersion = widget.version;
 
-    // We still want to check the changelog whenever the changelog URL is
-    // provided so that the update button can be surfaced even when the
-    // version date is intentionally hidden by the host app.
+    // Check whenever a changelog URL is provided, even when the date is
+    // hidden, so the update button can still be surfaced.
 
-    if (widget.showDate || widget.changelogUrl != null) {
-      _fetchChangelog();
+    if (widget.changelogUrl != null) {
+      _checkVersion();
     } else {
-      _isChecking = false;
+      _status = VersionStatus.unchecked;
     }
   }
 
-  /// Converts GitHub blob URLs to raw content URLs.
-  /// This is necessary for CORS compatibility in web environments.
+  /// Fetches and parses the changelog to determine the latest version.
   ///
-  /// Converts:
-  /// - https://github.com/gjwgit/geopod/blob/dev/CHANGELOG.md
-  /// to:
-  /// - https://raw.githubusercontent.com/gjwgit/geopod/dev/CHANGELOG.md
+  /// Every failure — transport, an unusable response, or a body with no
+  /// recognisable version entries — lands in [_reportCheckFailure]. That is
+  /// the point of this method: an incomplete check must not be reported as a
+  /// successful one.
 
-  String _convertToRawUrl(String url) {
-    if (url.contains('github.com') && url.contains('/blob/')) {
-      return url
-          .replaceFirst('github.com', 'raw.githubusercontent.com')
-          .replaceFirst('/blob/', '/');
-    }
-    return url;
-  }
+  Future<void> _checkVersion() async {
+    final url = convertToRawUrl(widget.changelogUrl!);
 
-  String _formatDate(String dateStr) {
-    try {
-      final year = dateStr.substring(0, 4);
-      final month = dateStr.substring(4, 6);
-      String day = dateStr.substring(6, 8);
-
-      // Remove leading zero for the day. (gjw 20250501)
-
-      if (day.startsWith('0') && day.length > 1) day = day.substring(1);
-
-      final months = {
-        '01': 'Jan',
-        '02': 'Feb',
-        '03': 'Mar',
-        '04': 'Apr',
-        '05': 'May',
-        '06': 'Jun',
-        '07': 'Jul',
-        '08': 'Aug',
-        '09': 'Sep',
-        '10': 'Oct',
-        '11': 'Nov',
-        '12': 'Dec',
-      };
-
-      return '$day ${months[month] ?? month} $year';
-    } catch (e) {
-      return dateStr;
-    }
-  }
-
-  /// Displays the CHANGELOG content in a dialogue with markdown rendering.
-  /// This method is called when the user taps on the version text.
-
-  void _showChangelogDialog(BuildContext context) {
-    if (_changelogContent.isEmpty) {
-      // Show a message if CHANGELOG content is not available.
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Changelog'),
-            content: const Text('Changelog content is not available.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Close'),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: Container(
-            constraints: BoxConstraints(
-              maxWidth: 800,
-              maxHeight: MediaQuery.of(context).size.height * 0.8,
-            ),
-            child: Column(
-              children: [
-                // Title bar with close button.
-
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Changelog',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: Colors.white,
-                            ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white),
-                        onPressed: () => Navigator.of(context).pop(),
-                        tooltip: 'Close',
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Markdown content.
-
-                Expanded(
-                  child: Markdown(
-                    data: _changelogContent,
-                    selectable: true,
-                    onTapLink: (text, href, title) async {
-                      if (href != null) {
-                        final Uri url = Uri.parse(href);
-                        if (await canLaunchUrl(url)) {
-                          await launchUrl(url);
-                        }
-                      }
-                    },
-                  ),
-                ),
-
-                // Bottom action bar.
-
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    border: Border(
-                      top: BorderSide(
-                        color: Theme.of(context).dividerColor,
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (widget.changelogUrl != null)
-                        TextButton.icon(
-                          icon: const Icon(Icons.open_in_new),
-                          label: const Text('View on GitHub'),
-                          onPressed: () async {
-                            final Uri url = Uri.parse(widget.changelogUrl!);
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url);
-                            }
-                          },
-                        ),
-                      const SizedBox(width: 8),
-                      FilledButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Close'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  /// Fetches and parses the changelog file to extract version and date information.
-  /// The method handles several scenarios:
-  /// 1. No changelog URL provided: Uses default values
-  /// 2. Changelog fetch successful: Extracts version and date
-  /// 3. Changelog fetch failed: Falls back to default values
-  ///
-  /// For web environments, this method automatically converts GitHub blob URLs
-  /// to raw.githubusercontent.com URLs to avoid CORS issues.
-
-  Future<void> _fetchChangelog() async {
-    if (widget.changelogUrl == null) {
-      if (mounted) {
-        setState(() {
-          _currentDate = '';
-          _latestVersion = _currentVersion;
-          _isLatest = true;
-          _isChecking = false;
-        });
-      }
-      return;
+    if (kIsWeb && url != widget.changelogUrl) {
+      debugPrint('Web platform detected: Converting URL from '
+          '${widget.changelogUrl} to $url');
     }
 
     try {
-      // Convert GitHub blob URLs to raw URLs for CORS compatibility.
+      // An app that does not know its own version cannot be compared
+      // against one that does. Saying so beats ranking it below every
+      // release and telling the user to update.
 
-      final url = _convertToRawUrl(widget.changelogUrl!);
-
-      if (kIsWeb && url != widget.changelogUrl) {
-        debugPrint(
-            'Web platform detected: Converting URL from ${widget.changelogUrl} '
-            'to $url');
+      if (!isComparableVersion(_currentVersion)) {
+        throw Exception('The app reported no usable version: '
+            '"$_currentVersion"');
       }
 
-      final response = await http.get(Uri.parse(url));
+      final content = await _load(url);
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to load changelog: '
-            'HTTP ${response.statusCode}');
+      if (content.isEmpty) throw Exception('The changelog was empty');
+
+      final entries = parseChangelogEntries(content);
+      final latest = latestVersionOf(entries);
+
+      if (latest == null) {
+        throw Exception('No `[version date]` entries found in the changelog');
       }
 
-      final content = response.body;
+      if (!mounted) return;
 
-      // Store the full CHANGELOG content for display in dialogue.
-
-      _changelogContent = content;
-
-      // Extract all version and date pairs from CHANGELOG.md.
-
-      final matches = RegExp(r'\[([\d.]+) (\d{8})').allMatches(content);
-
-      if (matches.isNotEmpty) {
-        // First match is the latest version.
-
-        final latestMatch = matches.first;
-        _latestVersion = latestMatch.group(1)!;
-
-        // Find the date for the current version.
-
-        String? currentVersionDate;
-        for (final match in matches) {
-          if (match.group(1) == _currentVersion) {
-            currentVersionDate = match.group(2);
-            break;
-          }
-        }
-
-        if (mounted) {
-          setState(() {
-            // Don't use default date if version not found.
-
-            _currentDate = currentVersionDate ?? '';
-            _isLatest = compareVersions(_currentVersion, _latestVersion) >= 0;
-            _isChecking = false;
-            _hasInternet = true;
-          });
-        }
-      } else {
-        if (mounted) {
-          setState(() {
-            _currentDate = '';
-            _latestVersion = _currentVersion;
-            _isLatest = true;
-            _isChecking = false;
-            _hasInternet = true;
-          });
-        }
-      }
+      setState(() {
+        _changelogContent = content;
+        _latestVersion = latest;
+        _currentDate = dateForVersion(entries, _currentVersion) ?? '';
+        _status = compareVersions(_currentVersion, latest) >= 0
+            ? VersionStatus.current
+            : VersionStatus.outdated;
+      });
     } catch (e) {
-      if (kIsWeb) {
-        debugPrint('Error fetching changelog on web platform: $e');
-        debugPrint('Make sure the CHANGELOG URL uses '
-            'raw.githubusercontent.com for GitHub files');
-        debugPrint('Original URL: ${widget.changelogUrl}');
-        debugPrint('Converted URL: ${_convertToRawUrl(widget.changelogUrl!)}');
-      } else {
-        debugPrint('Error fetching changelog: $e');
-      }
-      if (mounted) {
-        setState(() {
-          _currentDate = '';
-          _latestVersion = _currentVersion;
-          _isLatest = true;
-          _isChecking = false;
-          _hasInternet = false;
-        });
-      }
+      _reportCheckFailure(e);
     }
   }
 
-  /// Launches the configured [VersionWidget.downloadUrl] in the default
-  /// external handler so the user can fetch the new release.
+  /// Loads the changelog, retrying once after a short pause.
+  ///
+  /// Only transport failures are retried. A response that arrives but cannot
+  /// be parsed will not be helped by asking again, and is not retried.
 
-  Future<void> _launchDownload() async {
+  Future<String> _load(String url) async {
+    final loader = widget.changelogLoader ?? fetchChangelogOverHttp;
+
+    try {
+      return await loader(url);
+    } catch (e) {
+      debugPrint('Changelog fetch failed, retrying once in 2s: $e');
+      await Future<void>.delayed(const Duration(seconds: 2));
+
+      return loader(url);
+    }
+  }
+
+  /// Records that nothing is known about the latest version.
+
+  void _reportCheckFailure(Object error) {
+    debugPrint('version_widget: could not check the latest version: $error');
+
+    if (kIsWeb) {
+      debugPrint('On web the changelog must be served with CORS headers that '
+          'permit this origin, or from the same origin as the app. For '
+          'GitHub files use raw.githubusercontent.com.');
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _currentDate = '';
+      _latestVersion = '';
+      _status = widget.assumeLatestOnCheckFailure
+          ? VersionStatus.current
+          : VersionStatus.unknown;
+    });
+  }
+
+  /// Launches [VersionWidget.downloadUrl], or defers to the host's handler.
+
+  Future<void> _handleUpdatePressed() async {
+    final onPressed = widget.onUpdatePressed;
+
+    if (onPressed != null) {
+      onPressed();
+
+      return;
+    }
+
     final downloadUrl = widget.downloadUrl;
     if (downloadUrl == null || downloadUrl.isEmpty) return;
 
@@ -533,66 +374,90 @@ class _VersionWidgetState extends State<VersionWidget> {
   }
 
   /// The [TextStyle] applied to the version label.
-  ///
-  /// Selected from three cases, in order:
-  ///
-  /// 1. When [VersionWidget.userTextStyle] is null, the built-in palette
-  ///    is used: grey while still checking, blue when the installed
-  ///    version matches the CHANGELOG, and red plus bold when a newer
-  ///    release has been detected.
-  /// 2. When [VersionWidget.userTextStyle] is provided and the installed
-  ///    version is up to date (or the check has not yet completed) the
-  ///    host-supplied style is used verbatim, so the version label
-  ///    integrates with the surrounding theme.
-  /// 3. When [VersionWidget.userTextStyle] is provided and a newer
-  ///    release has been detected, the host-supplied style is preserved
-  ///    for every field except `color` and `fontWeight`, which are
-  ///    set to red and bold respectively so the upgrade warning remains
-  ///    visible.
 
   TextStyle _versionLabelStyle() {
-    final autoColour =
-        _isChecking ? Colors.grey : (_isLatest ? Colors.blue : Colors.red);
-    final autoWeight =
-        (_isChecking || _isLatest) ? FontWeight.normal : FontWeight.bold;
-
+    final unknownColour = widget.unknownColor ?? Colors.orange.shade800;
     final userStyle = widget.userTextStyle;
+
     if (userStyle == null) {
       return TextStyle(
-        color: autoColour,
+        color: _status.colourWith(unknownColour),
         fontSize: widget.fontSize,
-        fontWeight: autoWeight,
+        fontWeight: _status.weight,
       );
     }
 
-    final isOutdated = !_isChecking && !_isLatest;
-    if (isOutdated) {
-      // Outdated: escalate to the warning palette while preserving every
-      // other style field provided by the host (font family, size,
-      // letter spacing, decoration, etc.).
+    // Outdated escalates colour and weight; an unresolved check escalates
+    // colour alone. Everything else keeps the host's style untouched.
 
-      return userStyle.copyWith(
-        color: Colors.red,
-        fontWeight: FontWeight.bold,
-      );
+    switch (_status) {
+      case VersionStatus.outdated:
+        return userStyle.copyWith(
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+        );
+      case VersionStatus.unknown:
+        return userStyle.copyWith(color: unknownColour);
+      case VersionStatus.checking:
+      case VersionStatus.unchecked:
+      case VersionStatus.current:
+        return userStyle;
+    }
+  }
+
+  /// The markdown tooltip describing the current status.
+
+  String _tooltipMessage() {
+    const closing = '**Tap** on the **Version** string to view the '
+        "app's CHANGELOG.";
+
+    if (_status == VersionStatus.unknown) {
+      const defaultUnknown = 'The CHANGELOG could not be checked, so it is '
+          'not known whether a newer version is available. Check your '
+          'network connection, or the changelog location this app is '
+          'configured with.';
+
+      return '''
+
+    **Version $_currentVersion**
+
+    ${widget.unknownTooltip ?? defaultUnknown} $closing
+
+    ''';
     }
 
-    // Up to date or still checking: hand back the host's style verbatim
-    // for full visual parity with the previous behaviour.
+    const defaultLatest = 'this is the latest version available.';
 
-    return userStyle;
+    final defaultNotLatest = 'there is a new version available '
+        '$_latestVersion. You should consider '
+        'updating to the latest version.';
+
+    final body = _status == VersionStatus.outdated
+        ? widget.notLatestTooltip ?? defaultNotLatest
+        : widget.isLatestTooltip ?? defaultLatest;
+
+    return '''
+
+    **Version $_currentVersion**
+
+    According to the CHANGELOG from the app
+    repository $body $closing
+
+    ''';
   }
 
   /// Builds the inline discover-and-download action button surfaced when a
   /// newer release is detected. Returns null when the button should not be
   /// rendered for the current state.
 
-  Widget? _buildUpdateButton(BuildContext context) {
+  Widget? _buildUpdateButton() {
     final downloadUrl = widget.downloadUrl;
+    final hasTarget = widget.onUpdatePressed != null ||
+        (downloadUrl != null && downloadUrl.isNotEmpty);
+
     if (!widget.showUpdateButton) return null;
-    if (_isChecking) return null;
-    if (_isLatest) return null;
-    if (downloadUrl == null || downloadUrl.isEmpty) return null;
+    if (!_status.allowsUpdateButton) return null;
+    if (!hasTarget) return null;
 
     final label = widget.updateButtonLabel ?? 'Update';
     final tooltipMessage = '''
@@ -612,7 +477,7 @@ class _VersionWidgetState extends State<VersionWidget> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: _launchDownload,
+            onTap: _handleUpdatePressed,
             borderRadius: BorderRadius.circular(16),
             child: Container(
               padding: const EdgeInsets.symmetric(
@@ -652,38 +517,27 @@ class _VersionWidgetState extends State<VersionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final displayText = _isChecking
-        ? 'Version $_currentVersion'
-        : widget.showDate && _hasInternet && _currentDate.isNotEmpty
-            ? 'Version $_currentVersion - ${_formatDate(_currentDate)}'
-            : 'Version $_currentVersion';
+    final showDate =
+        widget.showDate && _status.showsDate && _currentDate.isNotEmpty;
 
-    const defaultLatestTooltip = 'this is the latest version available.';
-
-    final defaultNotLatestTooltip = 'there is a new version available '
-        '$_latestVersion. You should consider '
-        'updating to the latest version.';
-
-    final tooltipMessage = '''
-
-    **Version $_currentVersion**
-
-    According to the CHANGELOG from the app
-    repository ${_isLatest ? widget.isLatestTooltip ?? defaultLatestTooltip : widget.notLatestTooltip ?? defaultNotLatestTooltip} **Tap** on the
-    **Version** string to view the app's CHANGELOG.
-
-    ''';
+    final displayText = showDate
+        ? 'Version $_currentVersion - ${formatChangelogDate(_currentDate)}'
+        : 'Version $_currentVersion';
 
     final versionLabel = GestureDetector(
       onTap: widget.changelogUrl == null
           ? null
-          : () => _showChangelogDialog(context),
+          : () => showChangelogDialog(
+                context,
+                content: _changelogContent,
+                changelogUrl: widget.changelogUrl,
+              ),
       child: MouseRegion(
         cursor: widget.changelogUrl == null
             ? SystemMouseCursors.basic
             : SystemMouseCursors.click,
         child: MarkdownTooltip(
-          message: tooltipMessage,
+          message: _tooltipMessage(),
           child: Text(
             displayText,
             style: _versionLabelStyle(),
@@ -692,7 +546,7 @@ class _VersionWidgetState extends State<VersionWidget> {
       ),
     );
 
-    final updateButton = _buildUpdateButton(context);
+    final updateButton = _buildUpdateButton();
 
     // Short-circuit when neither the version label nor the update button is
     // visible to keep the widget completely transparent in the host layout.
