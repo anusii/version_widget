@@ -37,7 +37,7 @@ Add the package to you app's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  version_widget: ^1.0.5
+  version_widget: ^1.1.0
 ```
 
 ## Usage
@@ -50,7 +50,7 @@ import 'package:version_widget/version_widget.dart';
 // In your widget tree:
 
 VersionWidget(
-  version: '1.0.5',  // Required parameter
+  version: '1.1.0',  // Required parameter
 )
 ```
 
@@ -58,7 +58,7 @@ With CHANGELOG support:
 
 ```dart
 VersionWidget(
-  version: '1.0.5',
+  version: '1.1.0',
   changelogUrl: 'https://raw.githubusercontent.com/anusii/version_widget/main/CHANGELOG.md',
   showDate: true,
   defaultDate: '20240101',
@@ -69,7 +69,7 @@ With custom tooltip messages:
 
 ```dart
 VersionWidget(
-  version: '1.0.5',  // Required parameter
+  version: '1.1.0',  // Required parameter
   changelogUrl: 'https://github.com/anusii/version_widget/raw/main/CHANGELOG.md',
   isLatestTooltip: 'Your app is up to date! Enjoy the latest features.',
   notLatestTooltip: 'Version $_latestVersion is available with new features!',
@@ -84,7 +84,7 @@ browser or platform installer).
 
 ```dart
 VersionWidget(
-  version: '1.0.5',
+  version: '1.1.0',
   changelogUrl: 'https://github.com/anusii/version_widget/raw/main/CHANGELOG.md',
   showUpdateButton: true,
   downloadUrl: 'https://example.com/downloads/myapp-latest.exe',
@@ -96,7 +96,7 @@ Hide the version number text but keep the update button visible
 
 ```dart
 VersionWidget(
-  version: '1.0.5',
+  version: '1.1.0',
   changelogUrl: 'https://github.com/anusii/version_widget/raw/main/CHANGELOG.md',
   showVersion: false,
   showUpdateButton: true,
@@ -162,7 +162,7 @@ When the changelog genuinely cannot be made public, supply a
 // from the signed in session.
 
 VersionWidget(
-  version: '1.0.5',
+  version: '1.1.0',
   changelogUrl: 'https://api.example.com/changelog',
   changelogLoader: (url) async {
     final response = await http.get(
@@ -177,7 +177,7 @@ VersionWidget(
 // can never detect an update, since it is frozen at build time.
 
 VersionWidget(
-  version: '1.0.5',
+  version: '1.1.0',
   changelogUrl: 'asset',
   changelogLoader: (_) => rootBundle.loadString('assets/CHANGELOG.md'),
 )
