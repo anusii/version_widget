@@ -35,26 +35,25 @@ mkdir tmp
 
 # Extract the zip file.
 
+echo "Unzip ${claude} into ./tmp"
+
 (cd tmp; unzip "${claude}")
 
 # Run meld with the file and find result
 
-if [[ -d tmp/lib ]] && ! diff -rqw "lib" "tmp/lib" > /dev/null ; then
-    meld tmp/lib lib
-fi
+for f in lib assets test integration_test README.md CLAUDE.md; do
+    if [[ -e tmp/$f ]] && ! diff -rqw "$f" "tmp/$f" > /dev/null ; then
+	meld tmp/$f $f
+    fi
+done
 
-if [[ -d tmp/test ]]  && ! diff -rqw "test" "tmp/test" > /dev/null ; then
-    meld tmp/test test
-fi
-
-if [[ -d tmp/integration_test ]]  && ! diff -rqw "integration_test" "tmp/integration_test" > /dev/null ; then
-    meld tmp/integration_test integration_test
-fi
-
-# Check if pubspec included and if so compare.
+# Check if pubspec included and if so compare if the difference is
+# other than the version line.
 
 if [[ -f tmp/pubspec.yaml ]] && ! diff -qw "tmp/pubspec.yaml" "pubspec.yaml" > /dev/null; then
-  meld tmp/pubspec.yaml pubspec.yaml
+    if ! diff -u <(grep -v -E '^version:' pubspec.yaml) <(grep -v -E '^version:' tmp/pubspec.yaml) >/dev/null; then
+	meld tmp/pubspec.yaml pubspec.yaml
+    fi
 fi
 
 # Remove the file after meld closes

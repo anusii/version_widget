@@ -13,9 +13,10 @@ on:
     types: [opened, reopened, synchronize]
 
 env:
-  FLUTTER_VERSION: '3.41.7'
+  FLUTTER_VERSION: '3.47.3'
 
 jobs:
+
   analyze:
     runs-on: ubuntu-latest
     if: github.event.repository.private == false
@@ -115,7 +116,8 @@ jobs:
         uses: lycheeverse/lychee-action@v2
         with: # Don't fail for now but then create an issue - useful?
           # 20260909 jesscmoore .lycheeignore excluded by default
-          args: --no-progress
+          args:
+            --no-progress
             '*.md'
             './**/*.dart'
             'assets/**/*.md'

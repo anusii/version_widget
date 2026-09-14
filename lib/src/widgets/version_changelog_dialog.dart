@@ -1,6 +1,6 @@
 /// The in-app CHANGELOG dialogue.
 ///
-// Time-stamp: <Wednesday 2026-09-09 09:24:05 +1000 Jess Moore>
+// Time-stamp: <Monday 2026-09-14 11:36:11 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024-2026, Software Innovation Institute, ANU.
 ///
@@ -32,7 +32,7 @@ library;
 
 import 'package:flutter/material.dart';
 
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Opens [url] in the platform's default handler, if it can be launched.

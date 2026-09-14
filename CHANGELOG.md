@@ -7,9 +7,12 @@ description of the update. Updates in the 1.0.n series are heading
 toward a 1.1 release. The `[version timestamp user]` string is
 utilised by the flutter version_widget package.
 
-## 1.1 Review and Consolidate
+## 1.1
 
 + Report failed checks rather than assuming latest [1.1.0 20260909 jesscmoore]
+
+## 1.0 Review and Consolidate
+
 + Restore version string colours for status [1.0.10 20260512 tonypioneer]
 + Add an UPDATE button [1.0.9 20260510 tonypioneer]
 + Better tooltip formatting [1.0.8 20260429 gjw]
@@ -20,10 +23,10 @@ utilised by the flutter version_widget package.
 + Support VersionWidget fontSize [1.0.3 20250717 gjw]
 + Review and update doco [1.0.2 20250514 gjw]
 + Review and fix typos [1.0.1 20250514 gjw]
-
-## 1.0 Initial Release
-
 + Push to first version release [1.0.0 20250514 gjw]
+
+## 0.0 Initial Release
+
 + Minor update to README [0.0.10 20250514 gjw]
 + Update example to explain and demonstrate the package. [0.0.9 20250501 gjw]
 + Remove the default date. [0.0.9 20250501 kev]

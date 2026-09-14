@@ -2,7 +2,7 @@
 #
 # Generic Makefile
 #
-# Time-stamp: <Sunday 2026-05-10 14:53:32 +1000 Graham Williams>
+# Time-stamp: <Monday 2026-08-03 05:30:27 +1000 Graham Williams>
 #
 # Copyright (c) Graham.Williams@togaware.com
 #
@@ -28,9 +28,27 @@ DEST=/var/www/html/$(APP)
 # The host for the repository of packages, the path on the server to
 # the download folder, and the URL to the downloads.
 
-REPO=solidcommunity.au
-RLOC=/var/www/html/web/installers/
-DWLD=https://$(REPO)/installers/
+# Directory basename (e.g., rattle)
+
+DIRBASE := $(notdir $(CURDIR))
+
+ifeq ($(DIRBASE),rattle)
+  REPO=togaware.com
+  RLOC=apps/access/
+  DWLD=https://access.togaware.com/
+else
+  REPO=solidcommunity.au
+  RLOC=/var/www/html/web/installers/
+  DWLD=https://$(REPO)/installers/
+endif
+
+# Set user for ssh to server
+
+ifeq ($(USER),u9904893)
+  IUSER=jmoore
+else
+  IUSER=$(USER)
+endif
 
 ########################################################################
 # Supported Makefile modules.
@@ -130,7 +148,7 @@ deb:
 	(cd installers; make $@)
 	rsync -avzh installers/$(APP)_$(VER)_amd64.deb $(REPO):$(RLOC)$(APP)_amd64.deb
 	ssh $(REPO) chmod a+r $(RLOC)$(APP)_amd64.deb
-	wget $(DWLD)/$(APP)_amd64.deb -O $(APP)_amd64.deb
+	wget $(DWLD)$(APP)_amd64.deb -O $(APP)_amd64.deb
 	wajig install $(APP)_amd64.deb
 	rm -f $(APP)_amd64.deb
 	mv -f installers/$(APP)_*.deb installers/ARCHIVE/
@@ -173,8 +191,14 @@ debin:
 # at the end as it requires interaction (sudo password) and if earlier
 # it will hold up the oher non-interactive builds.
 
+ifeq ($(DIRBASE),rattle)
+GINSTALLS := upload
+else
+GINSTALLS := upload prod apk appbundle
+endif
+
 .PHONY: ginstall
-ginstall: upload prod apk appbundle
+ginstall: $(GINSTALLS)
 
 .PHONY: ginfo
 ginfo:
@@ -189,10 +213,19 @@ ginfo:
 		echo "No bump ID found."; \
 	fi
 
+ZFILES := lib test integration_test pubspec.yaml analysis_options.yaml README.md CLAUDE.md bluelink_fetch.py
+
 .PHONY: zip
 zip:
-	rm -f ignore/$(APP)_lib.zip
-	zip -r ignore/$(APP)_lib.zip lib test integration_test pubspec.yaml
+	@mkdir -p ignore
+	@rm -f ignore/$(APP)_lib.zip
+	@to_zip=""
+	@for f in $(ZFILES); do \
+		if [ -e "$$f" ]; then \
+			to_zip="$$to_zip $$f"; \
+		fi; \
+	done; \
+	zip -r ignore/$(APP)_lib.zip $$to_zip
 	open ignore/
 
 .PHONY: claude

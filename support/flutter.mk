@@ -20,18 +20,23 @@ endif
 define FLUTTER_HELP
 flutter:
 
-  android   Run with an attached Android device;
-  chrome    Run with the chrome device;
-  emu	    Run with the android emulator;
-  linux     Run with the linux device;
-  qlinux    Run with the linux device and debugPrint() turned off;
-  macos     Run with the macos device;
+  android          Run with an attached Android device;
+  chrome           Run with the chrome device;
+  emu              Run with the android emulator;
+  linux            Run with the linux device;
+  qlinux           Run with the linux device and debugPrint() turned off;
+  macos            Run with the macos device;
+  macos.reconfig   Regenerate Xcode files for the macos build;
+  macos.provision  Refresh/create the Debug config's automatic
+                   Development provisioning profile.
+                   Expires weekly on a free/personal team.
 
   prep      Prep for PR by running tests, checks, docs.
   push      Do a git push and bump the build number if there is one.
 
   minor_versions   Increment pubspec.yaml minor version
   major_versions   Increment pubspec.yaml major version
+  version	   Report the current app version
   versions         Copy pubspec.yaml version to snapcraft.yaml
 
   docs	    Run `dart doc` to create documentation.
@@ -103,7 +108,7 @@ LOC := $(shell if [ -f support/loc.sh ]; then echo support/loc.sh; \
 
 .PHONY: chrome
 chrome:
-	flutter run -d chrome --release
+	flutter run -d chrome --release --web-port=4400
 
 # 20220503 gjw The following fails if the target files already exist -
 # just needs to be run once.
@@ -139,6 +144,25 @@ qlinux: pubspec.lock $(BUILD_RUNNER) upgrade
 .PHONY: macos
 macos: $(BUILD_RUNNER) upgrade
 	flutter run --device-id macos
+
+.PHONY: macos.reconfig
+macos.reconfig:
+	bash update_project.sh macos --update
+
+# `flutter run -d macos` invokes xcodebuild without
+# -allowProvisioningUpdates, so it can't create or renew an automatic
+# Development provisioning profile itself — only Xcode's GUI (or
+# xcodebuild with that flag) can. Free/personal-team profiles expire
+# weekly, so this needs re-running periodically, not just once.
+# Builds via the .xcworkspace (not the bare .xcodeproj) since CocoaPods
+# is integrated. Doesn't need to fully succeed to take effect — signing
+# happens near the end of the build, so getting that far is enough even
+# if something later fails running standalone outside `flutter run`.
+
+.PHONY: macos.provision
+macos.provision:
+	cd macos && xcodebuild -workspace Runner.xcworkspace -scheme Runner \
+	    -configuration Debug -allowProvisioningUpdates build
 
 .PHONY: android
 android: $(BUILD_RUNNER) upgrade
@@ -188,9 +212,16 @@ fix:
 	dart fix --apply
 	@echo $(SEPARATOR)
 
+# 20260518 gjw For the format we should make sure all folders with a
+# pubspec.yaml have updated pacakges. This resolved an issue I was
+# having with `format` complaining `Failed to resolve package URI
+# "package:flutter_lints/flutter.yaml"` This will slow down a `format`
+# but it's prbably a good thing to do.
+
 .PHONY: format
 format:
 	@echo "Dart: FORMAT"
+	@find . -name pubspec.yaml -not -path '*/.*' -execdir flutter pub get > /dev/null \;
 	dart format lib/ $(if $(shell test -d example && echo yes),example/) $(if $(shell test -d test && echo yes),test/) $(if $(shell test -d integration_test && echo yes),integration_test/)
 	@echo $(SEPARATOR)
 
@@ -288,6 +319,8 @@ todo:
 license:
 	@echo "Files without a LICENSE:\n"
 	@-output=$$(find lib -type f -not -name '*~' -not -name 'README*' -not -name '*.g.dart' \
+	  -not -name '*.pb.dart' -not -name '*.pbenum.dart' \
+	  -not -name '*.pbjson.dart' -not -name '*.pbgrpc.dart' -not -name '*.proto' \
 	! -exec grep -qE '^(///? Copyright|///? Licensed)' {} \; -print | xargs printf "\t%s\n"); \
 	if [ $$(echo "$$output" | wc -w) -ne 0 ]; then \
 		echo "$$output"; \
@@ -544,6 +577,11 @@ lychee:
 	@echo "Lychee: CHECK LINKS."
 	-lychee --no-progress --format compact *.md ./**/*.dart $(if $(wildcard ./**/*.md),./**/*.md) $(if $(wildcard ./**/*.html),./**/*.html)
 	@echo $(SEPARATOR)
+
+.PHONY: version
+version:
+	@grep version: pubspec.yaml | sed 's/^version:/pubspec:/'
+	@echo "archive: $(shell ls installers/ARCHIVE/*deb | cut -d_ -f2 | sort -V | tail -n1)"
 
 ### TODO THESE SHOULD BE CHECKED AND CLEANED UP
 
