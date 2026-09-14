@@ -409,4 +409,52 @@ void main() {
 
     expect(find.textContaining('Version'), findsNothing);
   });
+
+  // 20260914 gjw Issue #34: a check that lands after the widget has gone
+  // must not call setState. Both outcomes are exercised, since the crash
+  // reported was in the catch block.
+
+  group('a check that completes after disposal', () {
+    testWidgets('is silent when the changelog arrives', (tester) async {
+      final gate = Completer<String>();
+
+      await tester.pumpWidget(
+        _host(
+          VersionWidget(
+            version: '1.0.0',
+            changelogUrl: _url,
+            changelogLoader: (_) => gate.future,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pumpWidget(_host(const SizedBox()));
+
+      gate.complete(canonicalChangelog);
+      await _settle(tester);
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('is silent when the fetch fails', (tester) async {
+      final gate = Completer<String>();
+
+      await tester.pumpWidget(
+        _host(
+          VersionWidget(
+            version: '1.0.0',
+            changelogUrl: _url,
+            changelogLoader: (_) => gate.future,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pumpWidget(_host(const SizedBox()));
+
+      gate.completeError(Exception('offline'));
+      await _settle(tester);
+
+      expect(tester.takeException(), isNull);
+    });
+  });
 }
