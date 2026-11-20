@@ -26,13 +26,14 @@ test -f lib/main.dart && IS_APP=true
 
 SCRIPTS=${HOME}/projects/scripts/
 FILES=(
+    ${SCRIPTS}github/ISSUE_TEMPLATE/bug_report.md .github/ISSUE_TEMPLATE/bug_report.md
+    ${SCRIPTS}github/ISSUE_TEMPLATE/feature_request.md .github/ISSUE_TEMPLATE/feature_request.md
     ${SCRIPTS}support/loc.sh support/loc.sh
     ${SCRIPTS}support/meld_zip_from_claude.sh support/meld_zip_from_claude.sh
     ${SCRIPTS}support/flutter.mk support/flutter.mk
     ${SCRIPTS}support/update.sh support/update.sh
     ${SCRIPTS}flutter/.gitignore .gitignore
     ${SCRIPTS}flutter/.lycheeignore .lycheeignore
-    ${SCRIPTS}flutter/CLAUDE.md CLAUDE.md
     ${SCRIPTS}flutter/dart_dependency_validator.yaml dart_dependency_validator.yaml
     ${SCRIPTS}Makefile Makefile
 )
@@ -50,6 +51,17 @@ if [ -d android ]; then
 	${SCRIPTS}flutter/android/settings.gradle.kts android/settings.gradle.kts
 	${SCRIPTS}flutter/android/gradle.properties android/gradle.properties
 	${SCRIPTS}flutter/android/gradle/wrapper/gradle-wrapper.properties android/gradle/wrapper/gradle-wrapper.properties
+    )
+fi
+
+# 20261030 gjw The installers workflow is now one file for all apps: the
+# app name comes from the repository name, LINUX_PKGS is the union of
+# what the apps need, and the snap and flatpak steps skip an app without
+# snap/ or flatpak/. Packages have no installers.
+
+if $IS_APP; then
+    FILES+=(
+	${SCRIPTS}github/workflows/installers.yaml .github/workflows/installers.yaml
     )
 fi
 
@@ -115,42 +127,6 @@ for ((i=0; i < length; i+=2)); do
 		meld "$f1" "$f2" 2> /dev/null
 	    fi
 
-	# 20260415 gjw Now deal with the APPs that require installers
-	# rather than the PKGS which don't.
-
-	# 20260324 gjw For the deb installers script we expect the
-	# Name= and Comment= to differ so ignore those lines.
-
-	elif [[ "$f1" == "installers/deb.sh" ]] && $IS_APP; then
-	    if diff <(grep -v '^Name=' "$f1" | grep -v '^Comment=' | sed '/^Description: /,/^EOL$/d') <(grep -v '^Name=' "$f2" | grep -v '^Comment=' | sed '/^Description: /,/^EOL$/d') >/dev/null; then
-		echo "IDENTICAL $f1 $f2"
-	    else
-		echo "MELD      $f1 $f2"
-		meld "$f1" "$f2" 2> /dev/null
-	    fi
-
-        # 20260306 gjw For the installers uploader we expect the HOST
-	# and FLDR to differ so ignore those lines.
-
-	elif [[ "$f1" == "installers/update.sh" ]] && $IS_APP; then
-	    if diff <(grep -v '^HOST=' "$f1" | grep -v '^FLDR=') <(grep -v '^HOST=' "$f2" | grep -v '^FLDR=') >/dev/null; then
-		echo "IDENTICAL $f1 $f2"
-	    else
-		echo "MELD      $f1 $f2"
-		meld "$f1" "$f2" 2> /dev/null
-	    fi
-
-	# 20260220 gjw For the installers workflow we expect the APP
-	# and LINUX_PKGS to differ so ignore those lines.
-
-	elif [[ "$f1" == ".github/workflows/installers.yaml" ]] && $IS_APP; then
-	    if diff <(grep -v '^  APP:' "$f1" | grep -v '^  LINUX_PKGS:') <(grep -v '^  APP:' "$f2" | grep -v '^  LINUX_PKGS:') >/dev/null; then
-		echo "IDENTICAL $f1 $f2"
-	    else
-		echo "MELD      $f1 $f2"
-		meld "$f1" "$f2" 2> /dev/null
-	    fi
-
 	# 20260306 gjw Otherwise do a straightforward comparison.
 
         else
@@ -185,7 +161,6 @@ SCRIPTSBB=${HOME}/projects/scriptsbb/flutter
 FILESBB=(
     .pubignore ${SCRIPTSBB}/pubignore
     .github/workflows/ci.yaml ${SCRIPTSBB}/github/workflows/ci.yaml
-    .github/workflows/installers.yaml ${SCRIPTSBB}/github/workflows/installers.yaml
     .github/pull_request_template.md ${SCRIPTSBB}/github/pull_request_template.md
     installers/deb.sh ${SCRIPTSBB}/installers/deb.sh
     installers/update.sh ${SCRIPTSBB}/installers/update.sh
@@ -243,7 +218,7 @@ for ((i=0; i < length; i+=2)); do
 	# Name= and Comment= to differ so ignore those lines.
 
 	elif [[ "$f1" == "installers/deb.sh" ]] && $IS_APP; then
-	    if diff <(grep -v '^Name=' "$f1" | grep -v '^Comment=' | sed '/^Description: /,/^EOL$/d') <(grep -v '^Name=' "$f2" | grep -v '^Comment=' | sed '/^Description: /,/^EOL$/d') >/dev/null; then
+	    if diff <(grep -v '^Name=' "$f1" | grep -v '^Comment=' | grep -v '^Section:' | grep -v '^Depends:' | sed '/^Description: /,/^EOL$/d') <(grep -v '^Name=' "$f2" | grep -v '^Comment=' | grep -v '^Section:' | grep -v '^Depends:' | sed '/^Description: /,/^EOL$/d') >/dev/null; then
 		echo "IDENTICAL $f1 $f2"
 	    else
 		echo "MELD      $f2 $f1"
@@ -255,17 +230,6 @@ for ((i=0; i < length; i+=2)); do
 
 	elif [[ "$f1" == "installers/update.sh" ]] && $IS_APP; then
 	    if diff <(grep -v '^HOST=' "$f1" | grep -v '^FLDR=') <(grep -v '^HOST=' "$f2" | grep -v '^FLDR=') >/dev/null; then
-		echo "IDENTICAL $f1 $f2"
-	    else
-		echo "MELD      $f2 $f1"
-		meld "$f2" "$f1" 2> /dev/null
-	    fi
-
-	# 20260220 gjw For the installers workflow we expect the APP
-	# and LINUX_PKGS to differ so ignore those lines.
-
-	elif [[ "$f1" == ".github/workflows/installers.yaml" ]] && $IS_APP; then
-	    if diff <(grep -v '^  APP:' "$f1" | grep -v '^  LINUX_PKGS:') <(grep -v '^  APP:' "$f2" | grep -v '^  LINUX_PKGS:') >/dev/null; then
 		echo "IDENTICAL $f1 $f2"
 	    else
 		echo "MELD      $f2 $f1"

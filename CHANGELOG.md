@@ -7,6 +7,10 @@ description of the update. Updates in the 1.0.n series are heading
 toward a 1.1 release. The `[version timestamp user]` string is
 utilised by the flutter version_widget package.
 
+## 2.0
+
++ Move to material_ui [2.0.0 20261121 gjw]
+
 ## 1.1
 
 + Report failed checks rather than assuming latest [1.1.0 20260909 jesscmoore]

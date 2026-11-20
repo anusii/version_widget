@@ -12,6 +12,7 @@ dependencies:
   # version_widget: ^1.0.5
   version_widget:
     path: ..
+  material_ui: ^1.11.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0
